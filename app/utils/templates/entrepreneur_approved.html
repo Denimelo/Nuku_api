@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Candidature Approuvée - NUKU</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f8f9fa;
+      }
+
+      .email-container {
+        max-width: 600px;
+        margin: 0 auto;
+        background-color: #ffffff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .header {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 40px 30px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header::before {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="white" opacity="0.1"/></svg>')
+          repeat;
+        animation: float 20s infinite linear;
+      }
+
+      @keyframes float {
+        0% {
+          transform: translate(-50%, -50%) rotate(0deg);
+        }
+        100% {
+          transform: translate(-50%, -50%) rotate(360deg);
+        }
+      }
+
+      .logo {
+        font-size: 32px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        letter-spacing: 2px;
+        position: relative;
+        z-index: 2;
+      }
+
+      .subtitle {
+        font-size: 16px;
+        opacity: 0.9;
+        font-weight: 300;
+        position: relative;
+        z-index: 2;
+      }
+
+      .success-badge {
+        background: rgba(255, 255, 255, 0.2);
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-size: 14px;
+        font-weight: 600;
+        margin-top: 20px;
+        backdrop-filter: blur(10px);
+        position: relative;
+        z-index: 2;
+      }
+
+      .content {
+        padding: 40px 30px;
+      }
+
+      .congratulations {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .congrats-icon {
+        font-size: 48px;
+        margin-bottom: 15px;
+      }
+
+      .welcome-message {
+        font-size: 26px;
+        color: #2c3e50;
+        margin-bottom: 15px;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .approval-message {
+        font-size: 18px;
+        color: #27ae60;
+        font-weight: 600;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .message-text {
+        font-size: 16px;
+        color: #5a6c7d;
+        margin-bottom: 25px;
+        line-height: 1.7;
+      }
+
+      .benefits-box {
+        background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+        border-radius: 12px;
+        padding: 30px;
+        margin: 30px 0;
+        border-left: 5px solid #4facfe;
+      }
+
+      .benefits-title {
+        font-size: 20px;
+        font-weight: 700;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .benefit-item {
+        display: flex;
+        align-items: flex-start;
+        margin-bottom: 15px;
+        padding: 12px;
+        background: rgba(255, 255, 255, 0.7);
+        border-radius: 8px;
+        transition: transform 0.2s ease;
+      }
+
+      .benefit-item:hover {
+        transform: translateX(5px);
+      }
+
+      .benefit-icon {
+        font-size: 20px;
+        margin-right: 15px;
+        margin-top: 2px;
+      }
+
+      .benefit-text {
+        flex: 1;
+        font-size: 15px;
+        color: #495057;
+        font-weight: 500;
+      }
+
+      .cta-button {
+        display: inline-block;
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        color: white;
+        padding: 18px 36px;
+        text-decoration: none;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+      }
+
+      .button-container {
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      .next-steps {
+        background: #f8f9fa;
+        border-radius: 10px;
+        padding: 25px;
+        margin: 25px 0;
+        border: 2px solid #e9ecef;
+      }
+
+      .next-steps-title {
+        font-size: 18px;
+        font-weight: 600;
+        color: #495057;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .step-item {
+        display: flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: 15px;
+        color: #6c757d;
+      }
+
+      .step-number {
+        background: #4facfe;
+        color: white;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        font-weight: bold;
+        margin-right: 12px;
+      }
+
+      .footer {
+        background-color: #f8f9fa;
+        padding: 30px;
+        text-align: center;
+        border-top: 1px solid #e9ecef;
+      }
+
+      .footer-text {
+        font-size: 14px;
+        color: #6c757d;
+        margin-bottom: 15px;
+      }
+
+      .footer-links {
+        font-size: 12px;
+        color: #adb5bd;
+      }
+
+      .footer-links a {
+        color: #4facfe;
+        text-decoration: none;
+        margin: 0 10px;
+      }
+
+      @media (max-width: 600px) {
+        .email-container {
+          margin: 0 10px;
+        }
+
+        .content {
+          padding: 30px 20px;
+        }
+
+        .header {
+          padding: 30px 20px;
+        }
+
+        .welcome-message {
+          font-size: 22px;
+        }
+
+        .cta-button {
+          padding: 16px 32px;
+          font-size: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="email-container">
+      <div class="header">
+        <div class="logo">NUKU</div>
+        <div class="subtitle">Accélération des MPME</div>
+        <div class="success-badge">✅ CANDIDATURE APPROUVÉE</div>
+      </div>
+
+      <div class="content">
+        <div class="congratulations">
+          <div class="congrats-icon">🎉</div>
+          <div class="welcome-message">Félicitations {{ full_name }} !</div>
+          <div class="approval-message">
+            Votre candidature a été acceptée avec succès
+          </div>
+        </div>
+
+        <div class="message-text">
+          Nous sommes ravis de vous annoncer que votre profil entrepreneurial
+          correspond parfaitement aux critères de notre programme
+          d'accélération. Vous faites désormais partie de la communauté NUKU !
+        </div>
+
+        <div class="benefits-box">
+          <div class="benefits-title">🚀 Ce qui vous attend :</div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">💡</div>
+            <div class="benefit-text">
+              <strong>Mentoring personnalisé</strong> avec nos experts
+              sectoriels
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">📈</div>
+            <div class="benefit-text">
+              <strong>Outils d'analyse</strong> pour optimiser votre croissance
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">🤝</div>
+            <div class="benefit-text">
+              <strong>Réseau d'entrepreneurs</strong> pour développer vos
+              partenariats
+            </div>
+          </div>
+
+          <div class="benefit-item">
+            <div class="benefit-icon">💰</div>
+            <div class="benefit-text">
+              <strong>Accès aux financements</strong> et opportunités
+              d'investissement
+            </div>
+          </div>
+        </div>
+
+        <div class="next-steps">
+          <div class="next-steps-title">🎯 Prochaines étapes :</div>
+
+          <div class="step-item">
+            <div class="step-number">1</div>
+            <div>Connectez-vous à votre espace personnel</div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">2</div>
+            <div>Complétez votre profil entrepreneurial</div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">3</div>
+            <div>Explorez les ressources disponibles</div>
+          </div>
+
+          <div class="step-item">
+            <div class="step-number">4</div>
+            <div>Planifiez votre première session de mentoring</div>
+          </div>
+        </div>
+
+        <div class="button-container">
+          <a href="https://nuku.app/login" class="cta-button">
+            🚀 Commencer l'aventure
+          </a>
+        </div>
+
+        <div
+          class="message-text"
+          style="font-size: 14px; color: #8b95a1; text-align: center"
+        >
+          Bienvenue dans l'écosystème NUKU ! Votre succès est notre priorité.
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="footer-text">
+          Nous sommes impatients de vous accompagner dans votre parcours
+          entrepreneurial !
+        </div>
+        <div class="footer-links">
+          <a href="#">Guide de démarrage</a> | <a href="#">Centre d'aide</a> |
+          <a href="#">Communauté</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
