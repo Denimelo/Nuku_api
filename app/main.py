@@ -30,6 +30,6 @@ app.add_middleware(
 )
 
 # 📦 Inclusion des routes
-app.include_router(auth.router, prefix="/auth", tags=["auth"])
-app.include_router(admin.router, prefix="/admin", tags=["Admin"])
-app.include_router(user.router, prefix="/user", tags=["User"])
+app.include_router(auth.router, tags=["auth"])
+app.include_router(admin.router, tags=["Admin"])
+app.include_router(user.router, tags=["User"])

@@ -13,7 +13,7 @@ psycopg2-binary==2.9.10  # Pour PostgreSQL
 aiosqlite==0.21.0  # Pour SQLite asynchrone
 
 # Sécurité
-bcrypt==4.3.0
+bcrypt ==4.3.0  # Pour le hachage des mots de passe
 python-jose==3.5.0  # JWT
 passlib==1.7.4
 email-validator==2.2.0
