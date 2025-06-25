@@ -1,3 +1,5 @@
+from app.models.user import UserStatus
+from app.schemas.user import UserType
 from app.utils.url_to_str import optional_str
 from sqlalchemy.orm import Session
 from app.models.expert import Expert
@@ -18,8 +20,8 @@ def create_expert(db: Session, data: ExpertCreate, temp_password: str):
         email=data.user.email,
         phone=data.user.phone,
         password_hash=hash_password(temp_password),
-        type="expert",
-        status="active"
+        user_type=UserType.expert,
+        status=UserStatus.active,
     )
     db.add(user)
     db.flush()  # pour avoir l'user_id
