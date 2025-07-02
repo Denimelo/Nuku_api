@@ -47,3 +47,7 @@ def create_expert(db: Session, data: ExpertCreate, temp_password: str):
 
 def get_expert_by_user_id(db: Session, user_id) -> Expert:
     return db.query(Expert).filter(Expert.user_id == user_id).first()
+
+def get_expert_by_id(db: Session, expert_id: str) -> Expert:
+    return db.query(Expert).filter(Expert.expert_id == expert_id).first()
+

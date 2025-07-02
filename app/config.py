@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     # Base de données
     POSTGRES_USER: str
     POSTGRES_PASSWORD: str
-    POSTGRES_DB: str
+    POSTGRES_DB: str 
     POSTGRES_HOST: str
     POSTGRES_PORT: str = "5432"
 

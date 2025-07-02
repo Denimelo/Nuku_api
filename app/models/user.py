@@ -40,15 +40,12 @@ class User(Base):
     temporary_password_expiration = Column(DateTime, nullable=True)
     is_temporary_password = Column(Boolean, default=False)
 
-    entrepreneur_profile = relationship(
-        "Entrepreneur",
-        back_populates="user",
-        uselist=False,
-        foreign_keys="Entrepreneur.user_id"
-    )
-    expert_profile = relationship(
-        "Expert",
-        back_populates="user",
-        uselist=False,
-        foreign_keys="Expert.user_id"
-    )
+    # Relations with other models
+
+    entrepreneur_profile = relationship("Entrepreneur",back_populates="user",uselist=False,foreign_keys="Entrepreneur.user_id")
+    expert_profile = relationship("Expert",back_populates="user",uselist=False,foreign_keys="Expert.user_id")
+    created_programs = relationship("Program", back_populates="created_by_user")
+    assigned_expert_roles = relationship("ProgramExpert", back_populates="assigned_by_user")
+    sent_messages = relationship("Message", back_populates="sender", foreign_keys='Message.sender_id')
+    received_messages = relationship("Message", back_populates="receiver", foreign_keys='Message.receiver_id')
+    uploaded_documents = relationship("Document", back_populates="uploaded_by_user")

@@ -1,27 +1,25 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
-from app.crud.expert import create_expert
-from app.crud.user import get_user_by_email, get_user_by_id
 from app.database import get_db
-from app.models.user import UserStatus, UserType
-from app.auth.dependencies import get_current_user, require_admin
-from app.schemas.expert import ExpertCreate, ExpertResponse
-from app.utils.email import send_expert_welcome_email, send_entrepreneur_validation_email, send_entrepreneur_rejection_email
-from app.utils.security import generate_temporary_password
+from app.models.user import User, UserStatus
+from app.models.expert import Expert
+from app.models.entrepreneur import Entrepreneur
 from app.schemas.user import UserResponse
 from app.schemas.entrepreneur import EntrepreneurResponse
-from app.crud.entrepreneur import Entrepreneur
-from app.schemas.expert import ExpertResponse
-from app.schemas.entrepreneur import EntrepreneurResponse
-from app.models.user import User
+from app.schemas.expert import ExpertCreate, ExpertResponse
+from app.crud.user import get_user_by_email, get_user_by_id
+from app.crud.expert import create_expert, get_expert_by_id
+from app.crud.entrepreneur import Entrepreneur, get_entrepreneur_by_id
+from app.auth.dependencies import get_current_user, require_admin
+from app.utils.email import send_expert_welcome_email, send_entrepreneur_validation_email, send_entrepreneur_rejection_email
+from app.utils.security import generate_temporary_password
 from app.utils.security import generate_temporary_password
 from typing import List
 from datetime import datetime
-from app.crud.user import create_user
-from app.models.expert import Expert
-from app.models.entrepreneur import Entrepreneur, ValidationStatus
 
+
+# Router pour les opérations administratives
 router = APIRouter(prefix="/admin", tags=["Admin"])
 
 # 🔍 Créer un expert
@@ -87,3 +85,27 @@ def list_all_experts(db: Session = Depends(get_db)):
 @router.get("/entrepreneurs", response_model=List[EntrepreneurResponse], dependencies=[Depends(require_admin)])
 def list_all_entrepreneurs(db: Session = Depends(get_db)):
     return db.query(Entrepreneur).all()
+
+# 🔍 Obtenir un entrepreneur par son ID
+@router.get("/entrepreneurs/{entrepreneur_id}", response_model=EntrepreneurResponse, dependencies=[Depends(require_admin)])
+def get_entrepreneur_by_id_route(
+    entrepreneur_id: str,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+    entrepreneur = get_entrepreneur_by_id(db, entrepreneur_id)
+    if not entrepreneur:
+        raise HTTPException(status_code=404, detail="Entrepreneur introuvable")
+    return entrepreneur
+
+# 🔍 Obtenir un expert par son ID
+@router.get("/experts/{expert_id}", response_model=ExpertResponse)
+def get_expert_by_id_route(
+    expert_id: str,
+    db: Session = Depends(get_db),
+    current_admin = Depends(require_admin)
+):
+    expert = get_expert_by_id(db, expert_id)
+    if not expert:
+        raise HTTPException(status_code=404, detail="Expert introuvable")
+    return expert

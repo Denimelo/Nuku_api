@@ -1,8 +1,9 @@
 from datetime import datetime, timedelta
 from sqlalchemy.orm import Session
+from uuid import UUID
 from app.models.user import User, UserStatus
 from app.utils.security import hash_password
-from app.schemas.user import UserCreate
+from app.schemas.user import UserCreate, UserUpdate
 
 def create_user(db: Session, user_data: UserCreate, is_temp_password=False) -> User:
     hashed_password = hash_password(user_data.password)
@@ -33,3 +34,27 @@ def get_user_by_email(db: Session, email: str) -> User:
 
 def get_user_by_id(db: Session, user_id) -> User:
     return db.query(User).filter(User.user_id == user_id).first()
+
+
+def get_users(db: Session, skip: int = 0, limit: int = 100):
+    return db.query(User).offset(skip).limit(limit).all()
+
+
+def update_user(db: Session, user_id: UUID, user_in: UserUpdate):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        return None
+    for field, value in user_in.dict(exclude_unset=True).items():
+        setattr(user, field, value)
+    db.commit()
+    db.refresh(user)
+    return user
+
+
+def delete_user(db: Session, user_id: UUID):
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        return None
+    db.delete(user)
+    db.commit()
+    return user
