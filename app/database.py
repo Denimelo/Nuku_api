@@ -5,10 +5,8 @@ from app.config import settings
 from sqlalchemy.orm import Session
 from fastapi import Depends
 
-DATABASE_URL = (
-    f"postgresql://{settings.POSTGRES_USER}:{settings.POSTGRES_PASSWORD}"
-    f"@{settings.POSTGRES_HOST}:{settings.POSTGRES_PORT}/{settings.POSTGRES_DB}"
-)
+# Utilise directement l'URL Supabase complète
+DATABASE_URL = settings.SUPABASE_DB_URL
 
 engine = create_engine(DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

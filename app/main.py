@@ -1,24 +1,36 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy import text
 
 from app.config import settings
 from app.database import Base, engine
 from app.startup import create_default_admin
 from app.routes import auth, admin, user
 
-# 🧱 Création automatique des tables au lancement
+# 🔌 Vérification de la connexion à la base de données
+def test_db_connection():
+    try:
+        with engine.connect() as connection:
+            connection.execute(text("SELECT 1"))
+            print("✅ Connexion à la base Supabase réussie.")
+    except Exception as e:
+        print("❌ Erreur de connexion à la base Supabase :", e)
+
+# 🧱 Création automatique des tables
 Base.metadata.create_all(bind=engine)
 
-# 🚀 Création de l'administrateur par défaut si inexistant
+# 🚀 Création de l'administrateur par défaut
 create_default_admin()
 
 # 🌐 Initialisation de l'application FastAPI
-# Initialisation de l'application FastAPI
 app = FastAPI(
     title="NUKU API",
     description="API pour la plateforme d'accélération des MPME",
     version="1.0.0"
 )
+
+# 🔌 Vérification de la base au démarrage
+test_db_connection()
 
 # 🔐 Middleware CORS
 app.add_middleware(
@@ -28,6 +40,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# 🚩 Route par défaut
+@app.get("/")
+def root():
+    return {"message": "Lancement de l'API réussi"}
 
 # 📦 Inclusion des routes
 app.include_router(auth.router, tags=["auth"])

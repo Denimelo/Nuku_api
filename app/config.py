@@ -7,12 +7,15 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "NUKU API"
     API_V1_STR: str = "/api/v1"
     
-    # Base de données
-    POSTGRES_USER: str
-    POSTGRES_PASSWORD: str
-    POSTGRES_DB: str 
-    POSTGRES_HOST: str
-    POSTGRES_PORT: str = "5432"
+    # # Base de données
+    # POSTGRES_USER: str
+    # POSTGRES_PASSWORD: str
+    # POSTGRES_DB: str 
+    # POSTGRES_HOST: str
+    # POSTGRES_PORT: str = "5432"
+
+    # Connexion Supabase
+    SUPABASE_DB_URL: str
 
     # Sécurité
     SECRET_KEY: str
