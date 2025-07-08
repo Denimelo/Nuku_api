@@ -1,5 +1,3 @@
-# app/utils/uuid.py
-
 import uuid
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy import Column

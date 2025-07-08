@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.schemas.auth import LoginRequest
@@ -5,9 +6,9 @@ from app.crud.entrepreneur import create_entrepreneur
 from app.crud.user import get_user_by_email
 from app.database import get_db
 from app.schemas.entrepreneur import EntrepreneurResponse, EntrepreneurCreate
-from app.utils.security import create_access_token, hash_password, verify_password
+from app.utils.security import create_access_token, generate_temporary_password, hash_password, verify_password
 from app.models.user import User, UserStatus
-from app.utils.email import send_admin_entrepreneur_notification_email
+from app.utils.email import send_admin_entrepreneur_notification_email, send_password_reset_email
 from app.auth.dependencies import get_current_user
 
 router = APIRouter(prefix="/auth", tags=["auth"])
@@ -34,9 +35,12 @@ def login(login_data: LoginRequest, db: Session = Depends(get_db)):
     if user.status != UserStatus.active:
         raise HTTPException(status_code=403, detail="Compte inactif")
     
-    # if user.must_change_password:
-    #     raise HTTPException(status_code=403, detail="Veuillez changer votre mot de passe temporaire"
-    # )
+    if user.is_temporary_password:
+        raise HTTPException(status_code=403, detail="Veuillez changer votre mot de passe temporaire avant de vous connecter.")
+    
+    if user.is_temporary_password and user.temporary_password_expiration < datetime.utcnow():
+        raise HTTPException(status_code=403, detail="Votre mot de passe temporaire a expiré. Veuillez en générer un nouveau.")
+
 
     token = create_access_token({"sub": str(user.user_id)})
     return {"access_token": token, "token_type": "bearer"}
@@ -60,6 +64,25 @@ def activate_account(token: str, db: Session = Depends(get_db)):
         return {"message": "Compte activé avec succès"}
     except Exception:
         raise HTTPException(status_code=400, detail="Token invalide ou expiré")
+    
+# Reset password endpoint
+@router.post("/reset-password")
+def reset_password(email: str, db: Session = Depends(get_db)):
+    user = get_user_by_email(db, email)
+    if not user:
+        raise HTTPException(status_code=404, detail="Aucun utilisateur trouvé avec cet email")
+
+    temp_password = generate_temporary_password()
+    user.password_hash = hash_password(temp_password)
+    user.is_temporary_password = True
+    user.temporary_password_expiration = datetime.utcnow() + timedelta(hours=6)
+
+    db.commit()
+    send_password_reset_email(user.email, f"{user.first_name} {user.last_name}", temp_password)
+
+    return {
+        "message": "Un mot de passe temporaire vous a été envoyé dans votre email. Veuillez vous connecter avec et le changer dans les six heures qui suivront."
+    }
 
 
 @router.post("/change-password")
