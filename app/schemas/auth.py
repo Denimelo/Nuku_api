@@ -18,6 +18,14 @@ class RegisterRequest(BaseModel):
     phone: str
     password: str
 
+class ResetPasswordRequest(BaseModel):
+    email: EmailStr
+
+
+class ResetPasswordResponse(BaseModel):
+    message: str
+    temp_password: str
+
 class RegisterResponse(BaseModel):
     message: str
     user_id: str

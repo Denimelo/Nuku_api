@@ -109,3 +109,25 @@ def get_expert_by_id_route(
     if not expert:
         raise HTTPException(status_code=404, detail="Expert introuvable")
     return expert
+
+# supprimer un utilisateur
+@router.delete("/users/{user_id}", dependencies=[Depends(require_admin)])
+def delete_user(user_id: UUID, db: Session = Depends(get_db)):
+    user = get_user_by_id(db, user_id)
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    db.delete(user)
+    db.commit()
+    return {"message": "Utilisateur supprimé avec succès"}
+
+# supprimer un expert
+@router.delete("/experts/{expert_id}", dependencies=[Depends(require_admin)])
+def delete_expert(expert_id: UUID, db: Session = Depends(get_db)):
+    expert = get_expert_by_id(db, expert_id)
+    if not expert:
+        raise HTTPException(status_code=404, detail="Expert introuvable")
+    
+    db.delete(expert)
+    db.commit()
+    return {"message": "Expert supprimé avec succès"}

@@ -61,6 +61,15 @@ def send_account_activation_email(to_email: str, full_name: str, token: str):
     html = render_template("activation_email.html", full_name=full_name, link=link)
     send_email(to_email, subject, html)
 
+# Sauvegardez le template HTML ci-dessus dans un fichier nommé "password_reset.html"
+# dans votre dossier de templates
+
+# 📧 Réinitialisation de mot de passe
+def send_password_reset_email(to_email: str, full_name: str, temp_password: str):
+    subject = "Réinitialisation de votre mot de passe NUKU"
+    html = render_template("password_reset.html", full_name=full_name, temp_password=temp_password)
+    send_email(to_email, subject, html)
+
 
 # 📧 Bienvenue expert
 def send_expert_welcome_email(to_email: str, full_name: str, temp_password: str):

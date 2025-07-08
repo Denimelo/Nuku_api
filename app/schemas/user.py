@@ -51,6 +51,19 @@ class UserResponse(BaseModel):
     status: str
     created_at: datetime
 
+class UserDelete(BaseModel):
+    user_id: UUID4
+    email: EmailStr
+    first_name: str
+    last_name: str
+    phone: Optional[str] = None
+    address: Optional[str] = None
+    city: Optional[str] = None
+    country: Optional[str] = None
+    postal_code: Optional[str] = None
+    user_type: UserType
+    status: UserStatus
+
 class UserOut(UserBase):
     user_id: UUID
     user_type: UserType

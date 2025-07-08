@@ -33,3 +33,15 @@ def delete_module(db: Session, module_id: UUID):
     db.delete(module)
     db.commit()
     return module
+
+def get_module_by_id(db: Session, module_id: UUID):
+    return db.query(Module).filter(Module.module_id == module_id).first()
+
+def get_modules_by_program_id(db: Session, program_id: UUID):
+    return db.query(Module).filter(Module.program_id == program_id).all()
+
+def get_modules_by_user_id(db: Session, user_id: UUID):
+    return db.query(Module).filter(Module.user_id == user_id).all()
+
+def get_modules_by_call_id(db: Session, call_id: UUID):
+    return db.query(Module).filter(Module.call_id == call_id).all()
