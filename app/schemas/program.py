@@ -1,6 +1,7 @@
 from pydantic import BaseModel, UUID4
-from typing import Optional
+from typing import List, Optional
 from datetime import date, datetime
+from enum import Enum
 
 class ProgramBase(BaseModel):
     name: str
@@ -39,3 +40,47 @@ class ProgramOut(ProgramBase):
 
 class ProgramDelete(BaseModel):
     program_id: UUID4
+
+class CompletionStatusSchema(str, Enum):
+    in_progress = "in_progress"
+    completed = "completed"
+    dropped = "dropped"
+
+class ProgramParticipantBase(BaseModel):
+    program_id: UUID4
+    entrepreneur_id: UUID4
+
+class ProgramParticipantCreate(ProgramParticipantBase):
+    pass
+
+class ProgramParticipantResponse(ProgramParticipantBase):
+    participant_id: UUID4
+    enrollment_date: datetime
+    completion_status: CompletionStatusSchema
+    completion_date: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True
+
+class ProgramWithParticipation(ProgramResponse):
+    """Programme avec info de participation de l'entrepreneur connecté"""
+    is_enrolled: bool = False
+    enrollment_date: Optional[datetime] = None
+    completion_status: Optional[CompletionStatusSchema] = None
+    participants_count: int = 0
+    available_spots: Optional[int] = None
+
+class ProgramStats(BaseModel):
+    """Statistiques d'un programme"""
+    total_participants: int
+    active_participants: int
+    completed_participants: int
+    dropped_participants: int
+    completion_rate: float
+
+class EntrepreneurProgramSummary(BaseModel):
+    """Résumé des programmes d'un entrepreneur"""
+    total_programs: int
+    active_programs: int
+    completed_programs: int
+    programs: List[ProgramParticipantResponse]
