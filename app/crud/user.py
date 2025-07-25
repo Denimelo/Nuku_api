@@ -3,58 +3,68 @@ from sqlalchemy.orm import Session
 from uuid import UUID
 from app.models.user import User, UserStatus
 from app.utils.security import hash_password
-from app.schemas.user import UserCreate, UserUpdate
+from typing import Dict, Any, Optional
 
-def create_user(db: Session, user_data: UserCreate, is_temp_password=False) -> User:
-    hashed_password = hash_password(user_data.password)
-    user = User(
-        email=user_data.email,
-        password_hash=hashed_password,
-        first_name=user_data.first_name,
-        last_name=user_data.last_name,
-        phone=user_data.phone,
-        address=user_data.address,
-        city=user_data.city,
-        country=user_data.country,
-        postal_code=user_data.postal_code,
-        user_type=user_data.user_type,
-        status=UserStatus.pending,
-        is_temporary_password=is_temp_password,
-        temporary_password_expiration=(datetime.utcnow() + timedelta(hours=6)) if is_temp_password else None
-    )
+def create_user(db: Session, user_data: Dict[str, Any]) -> User:
+    """Créer un utilisateur avec données dict (plus flexible)"""
+    if "password_hash" not in user_data and "password" in user_data:
+        user_data["password_hash"] = hash_password(user_data["password"])
+        del user_data["password"]
+    
+    user = User(**user_data)
     db.add(user)
     db.commit()
     db.refresh(user)
     return user
 
-
-def get_user_by_email(db: Session, email: str) -> User:
+def get_user_by_email(db: Session, email: str) -> Optional[User]:
     return db.query(User).filter(User.email == email).first()
 
-
-def get_user_by_id(db: Session, user_id) -> User:
+def get_user_by_id(db: Session, user_id: UUID) -> Optional[User]:
     return db.query(User).filter(User.user_id == user_id).first()
-
 
 def get_users(db: Session, skip: int = 0, limit: int = 100):
     return db.query(User).offset(skip).limit(limit).all()
 
-
-def update_user(db: Session, user_id: UUID, user_in: UserUpdate):
+def update_user(db: Session, user_id: UUID, update_data: Dict[str, Any]) -> Optional[User]:
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
         return None
-    for field, value in user_in.dict(exclude_unset=True).items():
-        setattr(user, field, value)
+    
+    for field, value in update_data.items():
+        if hasattr(user, field):
+            setattr(user, field, value)
+    
+    user.updated_at = datetime.utcnow()
     db.commit()
     db.refresh(user)
     return user
 
+def update_user_password(db: Session, user_id: UUID, new_password: str) -> bool:
+    """Mettre à jour le mot de passe d'un utilisateur"""
+    user = db.query(User).filter(User.user_id == user_id).first()
+    if not user:
+        return False
+    
+    user.password_hash = hash_password(new_password)
+    user.is_temporary_password = False
+    user.temporary_password_expiration = None
+    user.updated_at = datetime.utcnow()
+    
+    db.commit()
+    return True
 
-def delete_user(db: Session, user_id: UUID):
+def delete_user(db: Session, user_id: UUID) -> Optional[User]:
     user = db.query(User).filter(User.user_id == user_id).first()
     if not user:
         return None
     db.delete(user)
     db.commit()
     return user
+
+def get_users_by_type(db: Session, user_type: str, status: Optional[str] = None):
+    """Récupérer utilisateurs par type et statut"""
+    query = db.query(User).filter(User.user_type == user_type)
+    if status:
+        query = query.filter(User.status == status)
+    return query.all()

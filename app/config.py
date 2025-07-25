@@ -17,6 +17,14 @@ class Settings(BaseSettings):
     # Connexion Supabase
     SUPABASE_DB_URL: str
 
+    # Supabase
+    SUPABASE_URL: str
+    SUPABASE_ANON_KEY: str
+    SUPABASE_SERVICE_ROLE_KEY: str
+
+    # OTP Configuration
+    OTP_EXPIRY_MINUTES: int = 10
+
     # Sécurité
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_HOURS: int = 6

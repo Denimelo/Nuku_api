@@ -101,3 +101,25 @@ def send_admin_entrepreneur_notification_email(entrepreneur, user):
         entrepreneur=entrepreneur
     )
     send_email(settings.DEFAULT_ADMIN_EMAIL, subject, html)
+
+# 📧 Envoi de code OTP
+def send_otp_email(to_email: str, full_name: str, otp_code: str, otp_type: str):
+    """Envoyer un code OTP par email"""
+    
+    # Définir le sujet selon le type
+    subjects = {
+        "email_verification": "Code de vérification - Activation de compte NUKU",
+        "password_reset": "Code de vérification - Réinitialisation mot de passe NUKU", 
+        "login_verification": "Code de vérification - Connexion NUKU"
+    }
+    
+    subject = subjects.get(otp_type, "Code de vérification NUKU")
+    
+    html = render_template(
+        "otp_email.html", 
+        full_name=full_name, 
+        otp_code=otp_code,
+        expiry_minutes=settings.OTP_EXPIRY_MINUTES
+    )
+    
+    send_email(to_email, subject, html)

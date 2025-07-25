@@ -3,10 +3,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
 
 from app.config import settings
-from app.database import Base, engine
+from app.database import Base, engine 
 from app.startup import create_default_admin
 from app.routes import (
   admin, 
+  notification,
   assignment,
   assignmentSubmission,
   auth, 
@@ -20,6 +21,7 @@ from app.routes import (
   moduleContent, 
   program, 
   user,
+  otp,
 )
 
 # 🔌 Vérification de la connexion à la base de données
@@ -76,4 +78,6 @@ app.include_router(assignment.router, tags=["Assignment"])
 app.include_router(assignmentSubmission.router, tags=["AssignmentSubmission"])
 app.include_router(call.router, tags=["Call"])
 app.include_router(document.router, tags=["Document"])
+app.include_router(notification.router, tags=["Notification"])
+app.include_router(otp.router, tags=["OTP"])
 

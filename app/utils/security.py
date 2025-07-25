@@ -1,3 +1,4 @@
+import random
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 from datetime import datetime, timedelta
@@ -52,4 +53,16 @@ def generate_temporary_password(length: int = 10) -> str:
 def create_email_validation_token(user_id: str, hours: int = 6):
     expire = timedelta(hours=hours)
     return create_access_token({"sub": user_id, "scope": "email_validation"}, expire)
+
+# 🔢 7. Génération d'un code OTP à 6 chiffres
+def generate_otp_code() -> str:
+    return ''.join([str(random.randint(0, 9)) for _ in range(6)])
+
+# ⏰ 8. Calcul de l'expiration OTP
+def get_otp_expiry() -> datetime:
+    return datetime.utcnow() + timedelta(minutes=settings.OTP_EXPIRY_MINUTES)
+
+# 🧪 9. Validation du format OTP
+def is_valid_otp_format(otp_code: str) -> bool:
+    return len(otp_code) == 6 and otp_code.isdigit()
 

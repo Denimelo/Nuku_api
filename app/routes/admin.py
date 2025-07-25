@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from uuid import UUID
+from app.crud.notification import create_notification
+from app.models.notification import TypeNotification
+from app.schemas.notification import NotificationCreate
 from app.database import get_db
 from app.models.user import User, UserStatus
 from app.models.expert import Expert
@@ -30,8 +33,21 @@ def admin_create_expert(data: ExpertCreate, db: Session = Depends(get_db)):
 
     temp_password = generate_temporary_password()
     expert = create_expert(db, data, temp_password)
+
+    # Envoi de l'email de bienvenue à l'expert
     send_expert_welcome_email(expert.user.email, f"{expert.user.first_name} {expert.user.last_name}", temp_password)
+
+    # Notification
+    create_notification(db, NotificationCreate(
+        user_id=expert.user.user_id,
+        user_type="expert",
+        titre="Bienvenue sur NUKU",
+        message="Votre compte a été créé. Connectez-vous avec le mot de passe temporaire envoyé par e-mail.",
+        type=TypeNotification.success
+    ))
+    
     return expert
+
 
 # 🔍 Valider un entrepreneur
 @router.put("/entrepreneurs/{entrepreneur_id}/validate", dependencies=[Depends(require_admin)])
@@ -52,6 +68,16 @@ def validate_entrepreneur(entrepreneur_id: UUID, db: Session = Depends(get_db), 
 
     db.commit()
     send_entrepreneur_validation_email(user.email, f"{user.first_name} {user.last_name}")
+
+    # Notification
+    create_notification(db, NotificationCreate(
+        user_id=user.user_id,
+        user_type="entrepreneur",
+        titre="Compte validé",
+        message="Votre compte a été validé avec succès. Bienvenue sur NUKU.",
+        type=TypeNotification.success
+    ))
+
     return {"message": "Compte validé avec succès"}
 
 # 🔍 Rejeter une candidature d'entrepreneur
@@ -69,6 +95,16 @@ def reject_entrepreneur(entrepreneur_id: UUID, db: Session = Depends(get_db)):
 
     user = get_user_by_id(db, entrepreneur.user_id)
     send_entrepreneur_rejection_email(user.email, f"{user.first_name} {user.last_name}")
+
+    # Notification
+    create_notification(db, NotificationCreate(
+        user_id=user.user_id,
+        user_type="entrepreneur",
+        titre="Candidature refusée",
+        message="Votre demande d'inscription a été rejetée. Veuillez contacter l'administration pour plus de détails.",
+        type=TypeNotification.error
+    ))
+    
     return {"message": "Candidature rejetée"}
 
 # 🔍 Voir tous les utilisateurs
