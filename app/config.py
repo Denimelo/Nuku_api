@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # Connexion Supabase
     SUPABASE_DB_URL: str
 
-    # Supabase
+    # Supabase Storage
     SUPABASE_URL: str
     SUPABASE_ANON_KEY: str
     SUPABASE_SERVICE_ROLE_KEY: str

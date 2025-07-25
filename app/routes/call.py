@@ -7,7 +7,7 @@ from http.client import HTTPException
 from app.crud.call import create_call, get_calls, get_call_by_id
 from app.schemas.call import CallCreate, CallResponse
 
-router = APIRouter(prefix="/calls", tags=["Calls"])
+router = APIRouter(prefix="/call", tags=["Call"])
 
 @router.post("/", response_model=CallResponse)
 def create_call_route(data: CallCreate, db: Session = Depends(get_db)):

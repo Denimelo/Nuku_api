@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Inscription reçue - NUKU</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        .header { text-align: center; margin-bottom: 30px; }
+        .logo { color: #2563eb; font-size: 28px; font-weight: bold; }
+        .icon { font-size: 48px; margin: 20px 0; }
+        .message { font-size: 16px; line-height: 1.6; color: #333; }
+        .highlight { background: #f0f9ff; padding: 15px; border-left: 4px solid #2563eb; margin: 20px 0; }
+        .timeline { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; }
+        .footer { margin-top: 30px; text-align: center; color: #666; font-size: 14px; }
+        .cta { text-align: center; margin: 30px 0; }
+        .button { 
+            display: inline-block; 
+            background: #2563eb; 
+            color: white; 
+            padding: 12px 24px; 
+            border-radius: 6px; 
+            text-decoration: none; 
+            font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="icon">✅</div>
+            <h2>Inscription reçue avec succès !</h2>
+        </div>
+        
+        <div class="message">
+            <p>Bonjour <strong>{{ full_name }}</strong>,</p>
+            
+            <p>Nous avons bien reçu votre demande d'inscription à la plateforme NUKU pour votre entreprise <strong>{{ company_name }}</strong>.</p>
+            
+            <div class="highlight">
+                <strong>📋 Prochaines étapes :</strong><br>
+                Notre équipe va examiner votre dossier et vérifier les informations fournies dans les <strong>48 heures</strong> qui suivent.
+            </div>
+            
+            <div class="timeline">
+                <h3>🕒 Processus de validation :</h3>
+                <p><strong>1.</strong> Vérification de vos informations (en cours)<br>
+                <strong>2.</strong> Validation de votre profil entreprise<br>
+                <strong>3.</strong> Activation de votre compte<br>
+                <strong>4.</strong> Accès aux programmes d'accélération</p>
+            </div>
+            
+            <p>Une fois votre inscription validée, vous recevrez un email de confirmation et pourrez accéder à :</p>
+            <ul>
+                <li>🎯 Programmes d'accompagnement personnalisés</li>
+                <li>📚 Modules de formation</li>
+                <li>💬 Échanges avec des experts</li>
+                <li>📊 Tableau de bord de suivi</li>
+            </ul>
+        </div>
+        
+        <div class="cta">
+            <p>En attendant, vous pouvez préparer vos documents :</p>
+            <a href="{{ frontend_url }}/preparation" class="button">Guide de préparation</a>
+        </div>
+        
+        <div class="footer">
+            <p><strong>Questions ?</strong> Contactez-nous à {{ admin_email }}</p>
+            <p>Équipe NUKU - Accélération des MPME</p>
+        </div>
+    </div>
+</body>
+</html>

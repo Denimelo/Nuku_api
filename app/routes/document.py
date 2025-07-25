@@ -13,7 +13,7 @@ from app.crud.document import (
 )
 from app.schemas.document import DocumentCreate, DocumentResponse
 
-router = APIRouter(prefix="/documents", tags=["Documents"]) 
+router = APIRouter(prefix="/document", tags=["Document"]) 
 @router.post("/", response_model=DocumentResponse)
 def create_document_route(data: DocumentCreate, db: Session = Depends(get_db)):
     return create_document(db, data)

@@ -22,6 +22,7 @@ from app.routes import (
   program, 
   user,
   otp,
+  upload,
 )
 
 # 🔌 Vérification de la connexion à la base de données
@@ -72,7 +73,7 @@ app.include_router(expert.router, tags=["Expert"])
 app.include_router(program.router, tags=["Program"])
 app.include_router(module.router, tags=["Module"])
 app.include_router(moduleContent.router, tags=["ModuleContent"])
-app.include_router(message.router, tags=["Message"])
+app.include_router(message.router, tags=["Messages"])
 app.include_router(callParticipant.router, tags=["CallParticipant"])
 app.include_router(assignment.router, tags=["Assignment"])
 app.include_router(assignmentSubmission.router, tags=["AssignmentSubmission"])
@@ -80,4 +81,5 @@ app.include_router(call.router, tags=["Call"])
 app.include_router(document.router, tags=["Document"])
 app.include_router(notification.router, tags=["Notification"])
 app.include_router(otp.router, tags=["OTP"])
+app.include_router(upload.router, tags=["Upload"])
 

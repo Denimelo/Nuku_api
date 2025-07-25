@@ -6,7 +6,7 @@ from app.schemas.program import ProgramCreate, ProgramResponse
 from typing import List
 from uuid import UUID
 
-router = APIRouter(prefix="/programs", tags=["Programs"])
+router = APIRouter(prefix="/program", tags=["Program"])
 
 @router.post("/", response_model=ProgramResponse)
 def create_new_program(payload: ProgramCreate, db: Session = Depends(get_db)):

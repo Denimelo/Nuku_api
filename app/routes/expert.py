@@ -6,7 +6,7 @@ from app.crud.expert import get_expert_by_user_id
 from app.auth.dependencies import get_current_user
 from app.schemas.expert import ExpertResponse
 
-router = APIRouter(prefix="/experts", tags=["experts"])
+router = APIRouter(prefix="/expert", tags=["Expert"])
 
 # 🔍 Obtenir le profil expert de l'utilisateur connecté
 @router.get("/me", response_model=ExpertResponse)

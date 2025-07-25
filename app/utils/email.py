@@ -77,6 +77,17 @@ def send_expert_welcome_email(to_email: str, full_name: str, temp_password: str)
     html = render_template("expert_welcome.html", full_name=full_name, temp_password=temp_password)
     send_email(to_email, subject, html)
 
+# 📧 Confirmation d'inscription entrepreneur
+def send_entrepreneur_registration_confirmation(to_email: str, full_name: str, company_name: str):
+    subject = "Inscription reçue - Examen en cours (NUKU)"
+    html = render_template(
+        "entrepreneur_registration_confirmation.html", 
+        full_name=full_name,
+        company_name=company_name,
+        frontend_url=settings.FRONTEND_URL,
+        admin_email=settings.DEFAULT_ADMIN_EMAIL
+    )
+    send_email(to_email, subject, html)
 
 # 📧 Validation entrepreneur
 def send_entrepreneur_validation_email(to_email: str, full_name: str):

@@ -8,7 +8,7 @@ from app.crud.entrepreneur import get_entrepreneur_by_user_id
 from app.auth.dependencies import get_current_user
 from app.schemas.entrepreneur import EntrepreneurResponse
 
-router = APIRouter(prefix="/entrepreneurs", tags=["entrepreneurs"])
+router = APIRouter(prefix="/entrepreneur", tags=["Entrepreneur"])
 
 # 🔍 Obtenir le profil entrepreneur de l'utilisateur connecté
 @router.get("/me", response_model=EntrepreneurResponse)

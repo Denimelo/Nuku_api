@@ -7,7 +7,7 @@ from http.client import HTTPException
 from app.crud.callParticipant import (create_call_participant,get_call_participants,get_call_participant_by_id,update_call_participant,delete_call_participant,)
 from app.schemas.callParticipant import CallParticipantCreate, CallParticipantResponse
 
-router = APIRouter(prefix="/call_participants", tags=["Call Participants"])
+router = APIRouter(prefix="/call_participant", tags=["Call Participant"])
 
 @router.post("/", response_model=CallParticipantResponse)
 def create_call_participant_route(data: CallParticipantCreate, db: Session = Depends(get_db)):

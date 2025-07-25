@@ -15,7 +15,7 @@ from app.models.otp import OTPType
 from app.utils.security import (
     verify_password, hash_password, create_access_token, verify_access_token
 )
-from app.utils.email import send_otp_email, send_admin_entrepreneur_notification_email
+from app.utils.email import send_entrepreneur_registration_confirmation, send_otp_email, send_admin_entrepreneur_notification_email
 from app.config import settings
 from uuid import uuid4
 from datetime import datetime
@@ -117,6 +117,13 @@ def register_entrepreneur_step2(request: RegisterWithOTPRequest, db: Session = D
     
     # Envoyer notification à l'admin
     send_admin_entrepreneur_notification_email(entrepreneur, user)
+
+    # 🆕 Envoyer confirmation à l'entrepreneur
+    send_entrepreneur_registration_confirmation(
+        to_email=user.email,
+        full_name=f"{user.first_name} {user.last_name}",
+        company_name=entrepreneur.company_name
+    )
     
     db.commit()
     

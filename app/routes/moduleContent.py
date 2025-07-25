@@ -8,7 +8,7 @@ from http.client import HTTPException
 from app.crud.moduleContent import create_module_content, get_module_contents, get_module_content_by_id
 from app.schemas.moduleContent import ModuleContentCreate, ModuleContentResponse
 
-router = APIRouter(prefix="/module-contents", tags=["ModuleContents"])
+router = APIRouter(prefix="/module-content", tags=["ModuleContent"])
 
 @router.post("/", response_model=ModuleContentResponse)
 def create_module_content_route(data: ModuleContentCreate, db: Session = Depends(get_db)):

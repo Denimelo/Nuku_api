@@ -5,7 +5,7 @@ from app.schemas.notification import NotificationCreate, NotificationRead, Notif
 from app.crud.notification import create_notification, get_notifications_for_user, mark_as_read, delete_notification
 from uuid import UUID
 
-router = APIRouter(prefix="/notifications", tags=["notifications"])
+router = APIRouter(prefix="/notification", tags=["Notification"])
 
 @router.post("/", response_model=NotificationRead)
 def send_notification(payload: NotificationCreate, db: Session = Depends(get_db)):
