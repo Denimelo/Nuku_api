@@ -14,7 +14,6 @@ from app.routes import (
   admin, 
   notification,
   assignment,
-  assignmentSubmission,
   auth, 
   call,
   callParticipant,
@@ -23,7 +22,6 @@ from app.routes import (
   expert,
   message, 
   module, 
-  moduleContent, 
   program, 
   user,
   otp,
@@ -155,9 +153,7 @@ app.include_router(expert.router, prefix="/api/v1")
 
 app.include_router(program.router, prefix="/api/v1")
 app.include_router(module.router, prefix="/api/v1")
-app.include_router(moduleContent.router, prefix="/api/v1")
 app.include_router(assignment.router, prefix="/api/v1")
-app.include_router(assignmentSubmission.router, prefix="/api/v1")
 
 app.include_router(call.router, prefix="/api/v1")
 app.include_router(callParticipant.router, prefix="/api/v1")
