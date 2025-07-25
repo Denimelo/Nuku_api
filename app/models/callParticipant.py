@@ -73,7 +73,7 @@ class CallParticipant(Base):
     call = relationship("Call", back_populates="participants")
     entrepreneur = relationship("Entrepreneur", back_populates="call_participations")
     expert = relationship("Expert")
-    user = relationship("User")
+    user = relationship("User", foreign_keys=[user_id], back_populates="call_participations")
     invited_by_user = relationship("User", foreign_keys=[invited_by])
 
     def __repr__(self):

@@ -50,3 +50,4 @@ class User(Base):
     received_messages = relationship("Message", back_populates="receiver", foreign_keys='Message.receiver_id')
     uploaded_documents = relationship("Document", back_populates="uploaded_by_user")
     message_reactions = relationship("MessageReaction", back_populates="user")
+    call_participations = relationship("CallParticipant", back_populates="user", foreign_keys="CallParticipant.user_id")
