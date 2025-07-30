@@ -1,372 +1,354 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Candidature - NUKU</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #f8f9fa;
-      }
-
-      .email-container {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .header {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        color: white;
-        padding: 40px 30px;
-        text-align: center;
-      }
-
-      .logo {
-        font-size: 32px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        letter-spacing: 2px;
-      }
-
-      .subtitle {
-        font-size: 16px;
-        opacity: 0.9;
-        font-weight: 300;
-      }
-
-      .content {
-        padding: 40px 30px;
-      }
-
-      .message-header {
-        text-align: center;
-        margin-bottom: 30px;
-      }
-
-      .message-icon {
-        font-size: 48px;
-        margin-bottom: 15px;
-      }
-
-      .message-title {
-        font-size: 24px;
-        color: #2c3e50;
-        margin-bottom: 15px;
-        font-weight: 600;
-      }
-
-      .message-text {
-        font-size: 16px;
-        color: #5a6c7d;
-        margin-bottom: 25px;
-        line-height: 1.7;
-      }
-
-      .feedback-box {
-        background: linear-gradient(135deg, #ffeaa7 0%, #fab1a0 100%);
-        border-radius: 10px;
-        padding: 25px;
-        margin: 25px 0;
-        border-left: 4px solid #e17055;
-      }
-
-      .feedback-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #8b4513;
-        margin-bottom: 15px;
-      }
-
-      .feedback-text {
-        font-size: 15px;
-        color: #6c5ce7;
-        line-height: 1.6;
-      }
-
-      .encouragement-box {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 25px;
-        margin: 25px 0;
-        border: 2px solid #dee2e6;
-      }
-
-      .encouragement-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #495057;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-      }
-
-      .suggestion-item {
-        display: flex;
-        align-items: flex-start;
-        margin-bottom: 15px;
-        padding: 12px;
-        background: white;
-        border-radius: 8px;
-        border-left: 3px solid #74b9ff;
-      }
-
-      .suggestion-icon {
-        font-size: 18px;
-        margin-right: 12px;
-        margin-top: 2px;
-        color: #74b9ff;
-      }
-
-      .suggestion-text {
-        flex: 1;
-        font-size: 14px;
-        color: #495057;
-        line-height: 1.5;
-      }
-
-      .future-opportunities {
-        background: linear-gradient(135deg, #a8e6cf 0%, #dcedc1 100%);
-        border-radius: 10px;
-        padding: 25px;
-        margin: 25px 0;
-        text-align: center;
-      }
-
-      .opportunity-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: #2d3436;
-        margin-bottom: 15px;
-      }
-
-      .opportunity-text {
-        font-size: 16px;
-        color: #636e72;
-        margin-bottom: 20px;
-      }
-
-      .contact-button {
-        display: inline-block;
-        background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
-        color: white;
-        padding: 14px 28px;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 15px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
-      }
-
-      .contact-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(116, 185, 255, 0.4);
-      }
-
-      .resources-section {
-        margin: 30px 0;
-      }
-
-      .resources-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 15px;
-      }
-
-      .resource-link {
-        display: inline-block;
-        color: #74b9ff;
-        text-decoration: none;
-        padding: 8px 16px;
-        background: #f1f8ff;
-        border-radius: 20px;
-        margin: 5px 10px 5px 0;
-        font-size: 14px;
-        font-weight: 500;
-        transition: all 0.2s ease;
-      }
-
-      .resource-link:hover {
-        background: #74b9ff;
-        color: white;
-        transform: translateY(-1px);
-      }
-
-      .footer {
-        background-color: #f8f9fa;
-        padding: 30px;
-        text-align: center;
-        border-top: 1px solid #e9ecef;
-      }
-
-      .footer-text {
-        font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 15px;
-      }
-
-      .footer-links {
-        font-size: 12px;
-        color: #adb5bd;
-      }
-
-      .footer-links a {
-        color: #74b9ff;
-        text-decoration: none;
-        margin: 0 10px;
-      }
-
-      @media (max-width: 600px) {
-        .email-container {
-          margin: 0 10px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .content {
-          padding: 30px 20px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
         }
 
         .header {
-          padding: 30px 20px;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .message-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .message-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
         }
 
         .message-title {
-          font-size: 20px;
+            font-size: 22px;
+            color: #1a365d;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .feedback-box {
+            background: #fffbf0;
+            border: 1px solid #f6e05e;
+            border-left: 4px solid #d69e2e;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .feedback-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #744210;
+            margin-bottom: 16px;
+        }
+
+        .feedback-text {
+            font-size: 15px;
+            color: #744210;
+            line-height: 1.6;
+        }
+
+        .suggestions-box {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .suggestions-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .suggestion-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 16px;
+            padding: 12px;
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .suggestion-icon {
+            font-size: 18px;
+            margin-right: 12px;
+            margin-top: 2px;
+            color: #2b7a8b;
+        }
+
+        .suggestion-text {
+            flex: 1;
+            font-size: 14px;
+            color: #2d3748;
+            line-height: 1.5;
+        }
+
+        .suggestion-text strong {
+            color: #1a365d;
+        }
+
+        .future-opportunities {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .opportunity-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .opportunity-text {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
 
         .contact-button {
-          padding: 12px 24px;
-          font-size: 14px;
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 15px;
+            transition: opacity 0.2s ease;
         }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="email-container">
-      <div class="header">
-        <div class="logo">NUKU</div>
-        <div class="subtitle">Accélération des MPME</div>
-      </div>
 
-      <div class="content">
-        <div class="message-header">
-          <div class="message-icon">💌</div>
-          <div class="message-title">Bonjour {{ full_name }}</div>
-        </div>
+        .contact-button:hover {
+            opacity: 0.9;
+        }
 
-        <div class="message-text">
-          Nous vous remercions sincèrement pour l'intérêt que vous portez à la
-          plateforme NUKU et pour le temps que vous avez consacré à votre
-          candidature.
-        </div>
+        .resources-section {
+            margin: 24px 0;
+        }
 
-        <div class="feedback-box">
-          <div class="feedback-title">📋 Résultat de l'évaluation</div>
-          <div class="feedback-text">
-            Après une analyse approfondie de votre dossier, nous avons le regret
-            de vous informer que votre profil ne correspond pas aux critères de
-            notre programme d'accélération actuel. Cette décision ne reflète en
-            aucun cas la valeur de votre projet entrepreneurial.
-          </div>
-        </div>
+        .resources-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
 
-        <div class="encouragement-box">
-          <div class="encouragement-title">
-            💡 Suggestions pour renforcer votre candidature :
-          </div>
-
-          <div class="suggestion-item">
-            <div class="suggestion-icon">📈</div>
-            <div class="suggestion-text">
-              <strong>Développer votre traction :</strong> Travaillez sur
-              l'acquisition de clients et la validation de votre marché
-            </div>
-          </div>
-
-          <div class="suggestion-item">
-            <div class="suggestion-icon">💰</div>
-            <div class="suggestion-text">
-              <strong>Structurer vos finances :</strong> Établissez un business
-              plan détaillé avec des projections réalistes
-            </div>
-          </div>
-
-          <div class="suggestion-item">
-            <div class="suggestion-icon">🎯</div>
-            <div class="suggestion-text">
-              <strong>Affiner votre positionnement :</strong> Clarifiez votre
-              proposition de valeur unique
-            </div>
-          </div>
-
-          <div class="suggestion-item">
-            <div class="suggestion-icon">🤝</div>
-            <div class="suggestion-text">
-              <strong>Renforcer votre équipe :</strong> Entourez-vous de
-              compétences complémentaires
-            </div>
-          </div>
-        </div>
-
-        <div class="future-opportunities">
-          <div class="opportunity-title">🌟 L'avenir reste ouvert !</div>
-          <div class="opportunity-text">
-            Nous encourageons fortement les entrepreneurs à repostuler lorsque
-            leur projet aura évolué. Les critères et opportunités de NUKU
-            évoluent également avec le temps.
-          </div>
-          <a href="mailto:contact@nuku.app" class="contact-button">
-            📧 Nous recontacter
-          </a>
-        </div>
-
-        <div class="resources-section">
-          <div class="resources-title">
-            🔗 Ressources utiles pour entrepreneurs :
-          </div>
-          <a href="#" class="resource-link">Guide du business plan</a>
-          <a href="#" class="resource-link">Financement startup</a>
-          <a href="#" class="resource-link">Validation marché</a>
-          <a href="#" class="resource-link">Réseau entrepreneurs</a>
-        </div>
-
-        <div
-          class="message-text"
-          style="
+        .resource-link {
+            display: inline-block;
+            color: #2b7a8b;
+            text-decoration: none;
+            padding: 8px 16px;
+            background: #f0f9ff;
+            border-radius: 20px;
+            margin: 4px 8px 4px 0;
             font-size: 14px;
-            color: #8b95a1;
-            text-align: center;
-            margin-top: 30px;
-          "
-        >
-          Nous vous souhaitons beaucoup de succès dans vos projets
-          entrepreneuriaux et espérons avoir l'opportunité de vous accompagner
-          dans le futur.
-        </div>
-      </div>
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #bfdbfe;
+        }
 
-      <div class="footer">
-        <div class="footer-text">
-          Merci pour votre confiance et bonne continuation dans vos projets !
+        .resource-link:hover {
+            background: #2b7a8b;
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .message-title {
+                font-size: 20px;
+            }
+
+            .contact-button {
+                padding: 12px 24px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="subtitle">Plateforme d'accélération des MPME</div>
         </div>
-        <div class="footer-links">
-          <a href="#">Ressources entrepreneurs</a> | <a href="#">Blog NUKU</a> |
-          <a href="#">Nous contacter</a>
+
+        <div class="content">
+            <div class="message-header">
+                <div class="message-icon">💌</div>
+                <div class="message-title">Bonjour {{ full_name }}</div>
+            </div>
+
+            <div class="message-text">
+                Nous vous remercions sincèrement pour l'intérêt que vous portez à la plateforme NUKU et pour le temps que vous avez consacré à votre candidature.
+            </div>
+
+            <div class="feedback-box">
+                <div class="feedback-title">📋 Résultat de l'évaluation</div>
+                <div class="feedback-text">
+                    Après une analyse approfondie de votre dossier, nous avons le regret de vous informer que votre profil ne correspond pas aux critères de notre programme d'accélération actuel. Cette décision ne reflète en aucun cas la valeur de votre projet entrepreneurial.
+                    {% if reason %}
+                    <br><br><strong>Raison principale :</strong> {{ reason }}
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="suggestions-box">
+                <div class="suggestions-title">💡 Suggestions pour renforcer votre candidature</div>
+
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">📈</div>
+                    <div class="suggestion-text">
+                        <strong>Développer votre traction :</strong> Travaillez sur l'acquisition de clients et la validation de votre marché
+                    </div>
+                </div>
+
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">💰</div>
+                    <div class="suggestion-text">
+                        <strong>Structurer vos finances :</strong> Établissez un business plan détaillé avec des projections réalistes
+                    </div>
+                </div>
+
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">🎯</div>
+                    <div class="suggestion-text">
+                        <strong>Affiner votre positionnement :</strong> Clarifiez votre proposition de valeur unique
+                    </div>
+                </div>
+
+                <div class="suggestion-item">
+                    <div class="suggestion-icon">🤝</div>
+                    <div class="suggestion-text">
+                        <strong>Renforcer votre équipe :</strong> Entourez-vous de compétences complémentaires
+                    </div>
+                </div>
+            </div>
+
+            <div class="future-opportunities">
+                <div class="opportunity-title">🌟 L'avenir reste ouvert !</div>
+                <div class="opportunity-text">
+                    Nous encourageons fortement les entrepreneurs à repostuler lorsque leur projet aura évolué. Les critères et opportunités de NUKU évoluent également avec le temps.
+                </div>
+                <a href="mailto:{{ admin_email }}" class="contact-button">
+                    📧 Nous recontacter
+                </a>
+            </div>
+
+            <div class="resources-section">
+                <div class="resources-title">🔗 Ressources utiles pour entrepreneurs</div>
+                <a href="{{ frontend_url }}/resources/business-plan" class="resource-link">Guide du business plan</a>
+                <a href="{{ frontend_url }}/resources/funding" class="resource-link">Financement startup</a>
+                <a href="{{ frontend_url }}/resources/market-validation" class="resource-link">Validation marché</a>
+                <a href="{{ frontend_url }}/resources/network" class="resource-link">Réseau entrepreneurs</a>
+            </div>
+
+            <div class="message-text" style="font-size: 14px; color: #718096; text-align: center; margin-top: 32px;">
+                Nous vous souhaitons beaucoup de succès dans vos projets entrepreneuriaux et espérons avoir l'opportunité de vous accompagner dans le futur.
+            </div>
         </div>
-      </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                Merci pour votre confiance et bonne continuation dans vos projets !
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}/resources">Ressources entrepreneurs</a> | 
+                <a href="{{ frontend_url }}/blog">Blog NUKU</a> | 
+                <a href="{{ frontend_url }}/contact">Nous contacter</a>
+            </div>
+        </div>
     </div>
-  </body>
+</body>
 </html>

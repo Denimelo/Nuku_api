@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rappel de session - NUKU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .reminder-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: white;
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .session-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .session-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 12px;
+        }
+
+        .session-details {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .detail-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .join-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 24px 0 16px 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .join-button:hover {
+            opacity: 0.9;
+        }
+
+        .tips-section {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .tips-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 12px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .tip-icon {
+            margin-right: 8px;
+            margin-top: 2px;
+            font-size: 12px;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .session-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="header-subtitle">Plateforme d'accélération des MPME</div>
+        </div>
+
+        <div class="content">
+            <div class="reminder-badge">
+                🔔 Rappel de session
+            </div>
+
+            <div class="greeting">
+                Bonjour {{ full_name }},
+            </div>
+
+            <div class="message">
+                Votre session de mentorat commence dans <strong>1 heure</strong>. Nous vous rappelons les détails ci-dessous :
+            </div>
+
+            <div class="session-card">
+                <div class="session-title">{{ session_title }}</div>
+                
+                <div class="session-details">
+                    <div class="detail-item">
+                        <span class="detail-icon">📅</span>
+                        <span>{{ session_date }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">🎯</span>
+                        <span>Session de mentorat individuel</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">⏱️</span>
+                        <span>Durée estimée : 60 minutes</span>
+                    </div>
+                </div>
+
+                <a href="{{ session_url }}" class="join-button">
+                    Rejoindre la session
+                </a>
+            </div>
+
+            <div class="tips-section">
+                <div class="tips-title">💡 Conseils pour une session réussie</div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">✓</span>
+                    <span>Testez votre connexion internet et votre microphone</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✓</span>
+                    <span>Préparez vos questions et objectifs à l'avance</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✓</span>
+                    <span>Choisissez un environnement calme et sans distraction</span>
+                </div>
+                <div class="tip-item">
+                    <span class="tip-icon">✓</span>
+                    <span>Ayez un carnet pour prendre des notes</span>
+                </div>
+            </div>
+
+            <div class="message" style="font-size: 14px; color: #718096; margin-top: 24px;">
+                Si vous ne pouvez pas assister à cette session, veuillez nous en informer au plus tôt via votre espace personnel.
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                À bientôt sur NUKU !
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}">Tableau de bord</a> | 
+                <a href="{{ frontend_url }}/support">Support</a> | 
+                <a href="{{ frontend_url }}/contact">Contact</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

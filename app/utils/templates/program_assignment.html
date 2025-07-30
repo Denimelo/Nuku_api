@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Candidature Approuvée - NUKU</title>
+    <title>Nouveau programme - NUKU</title>
     <style>
         * {
             margin: 0;
@@ -41,123 +41,133 @@
             letter-spacing: 1px;
         }
 
-        .subtitle {
+        .header-subtitle {
             font-size: 14px;
             opacity: 0.9;
             font-weight: 400;
-        }
-
-        .success-badge {
-            background: rgba(255, 255, 255, 0.2);
-            display: inline-block;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-            margin-top: 16px;
-            backdrop-filter: blur(10px);
         }
 
         .content {
             padding: 32px 24px;
         }
 
-        .congratulations {
-            text-align: center;
-            margin-bottom: 32px;
-        }
-
-        .congrats-icon {
-            font-size: 48px;
-            margin-bottom: 16px;
-        }
-
-        .welcome-message {
-            font-size: 24px;
-            color: #1a365d;
-            margin-bottom: 12px;
-            font-weight: 700;
-        }
-
-        .approval-message {
-            font-size: 16px;
-            color: #38a169;
+        .success-badge {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
             font-weight: 600;
             margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        .message-text {
+        .greeting {
+            font-size: 18px;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .message {
             font-size: 16px;
             color: #4a5568;
             margin-bottom: 24px;
             line-height: 1.6;
         }
 
-        .benefits-box {
+        .program-card {
             background: #f7fafc;
             border: 2px solid #e2e8f0;
-            border-left: 4px solid #2b7a8b;
             border-radius: 8px;
             padding: 24px;
             margin: 24px 0;
         }
 
-        .benefits-title {
-            font-size: 18px;
-            font-weight: 600;
+        .program-title {
+            font-size: 20px;
+            font-weight: 700;
             color: #1a365d;
-            margin-bottom: 20px;
-            text-align: center;
+            margin-bottom: 16px;
         }
 
-        .benefit-item {
+        .program-details {
+            display: grid;
+            gap: 12px;
+        }
+
+        .detail-item {
             display: flex;
             align-items: center;
-            margin-bottom: 16px;
-            padding: 12px;
-            background: white;
-            border-radius: 6px;
-            border: 1px solid #e2e8f0;
-        }
-
-        .benefit-icon {
-            font-size: 20px;
-            margin-right: 16px;
-            color: #2b7a8b;
-        }
-
-        .benefit-text {
-            flex: 1;
-            font-size: 15px;
+            font-size: 14px;
             color: #2d3748;
-            font-weight: 500;
         }
 
-        .cta-button {
+        .detail-icon {
+            margin-right: 12px;
+            font-size: 16px;
+            width: 20px;
+        }
+
+        .expert-info {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 16px 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .expert-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 16px;
+        }
+
+        .expert-details h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 4px;
+        }
+
+        .expert-details .role {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .action-button {
             display: inline-block;
             background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
             color: white;
-            padding: 16px 32px;
+            padding: 14px 28px;
             text-decoration: none;
             border-radius: 6px;
             font-weight: 600;
             font-size: 16px;
+            margin: 24px 0 16px 0;
             transition: opacity 0.2s ease;
         }
 
-        .cta-button:hover {
+        .action-button:hover {
             opacity: 0.9;
-        }
-
-        .button-container {
-            text-align: center;
-            margin: 32px 0;
         }
 
         .next-steps {
             background: #edf2f7;
             border-radius: 6px;
-            padding: 24px;
+            padding: 20px;
             margin: 24px 0;
         }
 
@@ -166,13 +176,11 @@
             font-weight: 600;
             color: #1a365d;
             margin-bottom: 16px;
-            display: flex;
-            align-items: center;
         }
 
         .step-item {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             margin-bottom: 12px;
             font-size: 14px;
             color: #4a5568;
@@ -230,13 +238,18 @@
                 padding: 24px 16px;
             }
 
-            .welcome-message {
-                font-size: 20px;
+            .program-card {
+                padding: 20px;
             }
 
-            .cta-button {
-                padding: 14px 28px;
-                font-size: 15px;
+            .expert-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .expert-avatar {
+                margin-right: 0;
+                margin-bottom: 12px;
             }
         }
     </style>
@@ -245,98 +258,97 @@
     <div class="email-container">
         <div class="header">
             <div class="logo">NUKU</div>
-            <div class="subtitle">Plateforme d'accélération des MPME</div>
-            <div class="success-badge">✅ CANDIDATURE APPROUVÉE</div>
+            <div class="header-subtitle">Plateforme d'accélération des MPME</div>
         </div>
 
         <div class="content">
-            <div class="congratulations">
-                <div class="congrats-icon">🎉</div>
-                <div class="welcome-message">Félicitations {{ full_name }} !</div>
-                <div class="approval-message">
-                    Votre candidature a été acceptée avec succès
+            <div class="success-badge">
+                🎓 Nouveau programme
+            </div>
+
+            <div class="greeting">
+                Félicitations {{ full_name }} !
+            </div>
+
+            <div class="message">
+                Nous sommes ravis de vous informer que vous avez été inscrit(e) à un nouveau programme d'accélération.
+                Votre parcours d'apprentissage commence maintenant !
+            </div>
+
+            <div class="program-card">
+                <div class="program-title">{{ program_title }}</div>
+                
+                <div class="program-details">
+                    <div class="detail-item">
+                        <span class="detail-icon">🎯</span>
+                        <span>Programme d'accélération entrepreneuriale</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">⏱️</span>
+                        <span>Durée : 12 semaines</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">📚</span>
+                        <span>Modules interactifs et sessions pratiques</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-icon">🤝</span>
+                        <span>Accompagnement personnalisé</span>
+                    </div>
+                </div>
+
+                <div class="expert-info">
+                    <div class="expert-avatar">
+                        {{ expert_name[0]|upper }}
+                    </div>
+                    <div class="expert-details">
+                        <h4>{{ expert_name }}</h4>
+                        <div class="role">Votre expert accompagnateur</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="message-text">
-                Nous sommes ravis de vous annoncer que votre profil entrepreneurial correspond parfaitement aux critères de notre programme d'accélération. Vous faites désormais partie de la communauté NUKU !
-            </div>
-
-            <div class="benefits-box">
-                <div class="benefits-title">🚀 Ce qui vous attend</div>
-
-                <div class="benefit-item">
-                    <div class="benefit-icon">💡</div>
-                    <div class="benefit-text">
-                        <strong>Mentoring personnalisé</strong> avec nos experts sectoriels
-                    </div>
-                </div>
-
-                <div class="benefit-item">
-                    <div class="benefit-icon">📈</div>
-                    <div class="benefit-text">
-                        <strong>Outils d'analyse</strong> pour optimiser votre croissance
-                    </div>
-                </div>
-
-                <div class="benefit-item">
-                    <div class="benefit-icon">🤝</div>
-                    <div class="benefit-text">
-                        <strong>Réseau d'entrepreneurs</strong> pour développer vos partenariats
-                    </div>
-                </div>
-
-                <div class="benefit-item">
-                    <div class="benefit-icon">💰</div>
-                    <div class="benefit-text">
-                        <strong>Accès aux financements</strong> et opportunités d'investissement
-                    </div>
-                </div>
-            </div>
+            <a href="{{ frontend_url }}/programs" class="action-button">
+                Accéder à mon programme
+            </a>
 
             <div class="next-steps">
-                <div class="next-steps-title">🎯 Prochaines étapes</div>
-
+                <div class="next-steps-title">🚀 Prochaines étapes</div>
+                
                 <div class="step-item">
                     <div class="step-number">1</div>
-                    <div>Connectez-vous à votre espace personnel</div>
+                    <div>Consultez le contenu du programme et le planning</div>
                 </div>
-
+                
                 <div class="step-item">
                     <div class="step-number">2</div>
-                    <div>Complétez votre profil entrepreneurial</div>
+                    <div>Complétez votre profil entrepreneurial si ce n'est pas déjà fait</div>
                 </div>
-
+                
                 <div class="step-item">
                     <div class="step-number">3</div>
-                    <div>Explorez les ressources disponibles</div>
+                    <div>Prenez contact avec votre expert pour planifier votre première session</div>
                 </div>
-
+                
                 <div class="step-item">
                     <div class="step-number">4</div>
-                    <div>Planifiez votre première session de mentoring</div>
+                    <div>Commencez le premier module de formation</div>
                 </div>
             </div>
 
-            <div class="button-container">
-                <a href="{{ frontend_url }}/login" class="cta-button">
-                    🚀 Commencer l'aventure
-                </a>
-            </div>
-
-            <div class="message-text" style="font-size: 14px; color: #718096; text-align: center; margin-top: 24px;">
-                Bienvenue dans l'écosystème NUKU ! Votre succès est notre priorité.
+            <div class="message" style="font-size: 14px; color: #718096; margin-top: 24px;">
+                Nous sommes impatients de vous accompagner dans cette aventure entrepreneuriale passionnante !
             </div>
         </div>
 
         <div class="footer">
             <div class="footer-text">
-                Nous sommes impatients de vous accompagner dans votre parcours entrepreneurial !
+                Bienvenue dans votre nouveau programme NUKU !
             </div>
             <div class="footer-links">
-                <a href="{{ frontend_url }}/guide">Guide de démarrage</a> | 
-                <a href="{{ frontend_url }}/support">Centre d'aide</a> | 
-                <a href="{{ frontend_url }}/community">Communauté</a>
+                <a href="{{ frontend_url }}">Tableau de bord</a> | 
+                <a href="{{ frontend_url }}/programs">Mes programmes</a> | 
+                <a href="{{ frontend_url }}/support">Support</a>
             </div>
         </div>
     </div>

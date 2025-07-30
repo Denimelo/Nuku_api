@@ -1,443 +1,441 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nouvelle candidature entrepreneur - NUKU</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #f8f9fa;
-      }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
 
-      .email-container {
-        max-width: 700px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .header {
-        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
-        color: white;
-        padding: 30px;
-        text-align: center;
-      }
-
-      .logo {
-        font-size: 28px;
-        font-weight: bold;
-        margin-bottom: 8px;
-        letter-spacing: 2px;
-      }
-
-      .subtitle {
-        font-size: 14px;
-        opacity: 0.9;
-        font-weight: 300;
-      }
-
-      .admin-badge {
-        background: rgba(255, 255, 255, 0.2);
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-        margin-top: 15px;
-        backdrop-filter: blur(10px);
-      }
-
-      .content {
-        padding: 30px;
-      }
-
-      .notification-header {
-        background: linear-gradient(135deg, #fd79a8 0%, #fdcb6e 100%);
-        border-radius: 10px;
-        padding: 20px;
-        margin-bottom: 25px;
-        text-align: center;
-      }
-
-      .notification-title {
-        font-size: 20px;
-        font-weight: 700;
-        color: white;
-        margin-bottom: 5px;
-      }
-
-      .notification-subtitle {
-        font-size: 14px;
-        color: rgba(255, 255, 255, 0.9);
-      }
-
-      .candidate-section {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 20px;
-        border-left: 4px solid #6c5ce7;
-      }
-
-      .section-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #2c3e50;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-      }
-
-      .section-icon {
-        margin-right: 10px;
-        font-size: 20px;
-      }
-
-      .info-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 15px;
-        margin-bottom: 15px;
-      }
-
-      .info-item {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        border: 1px solid #e9ecef;
-      }
-
-      .info-label {
-        font-size: 12px;
-        color: #6c757d;
-        font-weight: 600;
-        text-transform: uppercase;
-        margin-bottom: 5px;
-        letter-spacing: 0.5px;
-      }
-
-      .info-value {
-        font-size: 15px;
-        color: #2c3e50;
-        font-weight: 500;
-        word-break: break-word;
-      }
-
-      .company-section {
-        background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
-        border-radius: 10px;
-        padding: 25px;
-        margin-bottom: 20px;
-        border-left: 4px solid #2196f3;
-      }
-
-      .description-box {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        border-left: 3px solid #4caf50;
-        margin-top: 10px;
-      }
-
-      .description-text {
-        font-size: 14px;
-        color: #495057;
-        line-height: 1.6;
-        font-style: italic;
-      }
-
-      .metrics-row {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 15px;
-        margin-top: 15px;
-      }
-
-      .metric-card {
-        background: white;
-        padding: 15px;
-        border-radius: 8px;
-        text-align: center;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
-      }
-
-      .metric-card:hover {
-        border-color: #6c5ce7;
-        transform: translateY(-2px);
-      }
-
-      .metric-number {
-        font-size: 18px;
-        font-weight: 700;
-        color: #6c5ce7;
-        margin-bottom: 5px;
-      }
-
-      .metric-label {
-        font-size: 12px;
-        color: #6c757d;
-        font-weight: 500;
-      }
-
-      .action-buttons {
-        display: flex;
-        gap: 15px;
-        justify-content: center;
-        margin: 30px 0;
-        flex-wrap: wrap;
-      }
-
-      .action-button {
-        display: inline-flex;
-        align-items: center;
-        padding: 12px 24px;
-        border-radius: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 14px;
-        transition: all 0.3s ease;
-        border: 2px solid transparent;
-      }
-
-      .approve-btn {
-        background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-      }
-
-      .approve-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(0, 184, 148, 0.4);
-      }
-
-      .reject-btn {
-        background: linear-gradient(135deg, #fd79a8 0%, #e84393 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(253, 121, 168, 0.3);
-      }
-
-      .reject-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(253, 121, 168, 0.4);
-      }
-
-      .review-btn {
-        background: white;
-        color: #6c5ce7;
-        border-color: #6c5ce7;
-      }
-
-      .review-btn:hover {
-        background: #6c5ce7;
-        color: white;
-      }
-
-      .timestamp {
-        text-align: center;
-        font-size: 12px;
-        color: #8b95a1;
-        margin-top: 20px;
-        padding: 10px;
-        background: #f8f9fa;
-        border-radius: 5px;
-      }
-
-      .footer {
-        background-color: #f8f9fa;
-        padding: 20px;
-        text-align: center;
-        border-top: 1px solid #e9ecef;
-      }
-
-      .footer-text {
-        font-size: 12px;
-        color: #6c757d;
-      }
-
-      @media (max-width: 600px) {
         .email-container {
-          margin: 0 10px;
+            max-width: 700px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .admin-badge {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+            backdrop-filter: blur(10px);
         }
 
         .content {
-          padding: 20px;
+            padding: 32px 24px;
+        }
+
+        .notification-header {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-left: 4px solid #f6ad55;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .notification-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+
+        .notification-subtitle {
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .candidate-section {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 8px;
+            font-size: 18px;
         }
 
         .info-grid {
-          grid-template-columns: 1fr;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .info-item {
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: #1a365d;
+            font-weight: 500;
+            word-break: break-word;
+        }
+
+        .company-section {
+            background: #edf2f7;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid #cbd5e0;
+        }
+
+        .description-box {
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            border-left: 3px solid #2b7a8b;
+            margin-top: 16px;
+        }
+
+        .description-text {
+            font-size: 14px;
+            color: #2d3748;
+            line-height: 1.6;
+            font-style: italic;
         }
 
         .metrics-row {
-          grid-template-columns: repeat(2, 1fr);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin-top: 16px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 16px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+
+        .metric-number {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2b7a8b;
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 12px;
+            color: #718096;
+            font-weight: 500;
         }
 
         .action-buttons {
-          flex-direction: column;
-          align-items: center;
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            margin: 32px 0;
+            flex-wrap: wrap;
         }
 
         .action-button {
-          width: 100%;
-          max-width: 200px;
-          justify-content: center;
+            display: inline-flex;
+            align-items: center;
+            padding: 14px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s ease;
         }
-      }
+
+        .approve-btn {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+            color: white;
+        }
+
+        .approve-btn:hover {
+            opacity: 0.9;
+        }
+
+        .reject-btn {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+            color: white;
+        }
+
+        .reject-btn:hover {
+            opacity: 0.9;
+        }
+
+        .review-btn {
+            background: white;
+            color: #1a365d;
+            border: 2px solid #1a365d;
+        }
+
+        .review-btn:hover {
+            background: #1a365d;
+            color: white;
+        }
+
+        .timestamp {
+            text-align: center;
+            font-size: 12px;
+            color: #718096;
+            margin-top: 24px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 6px;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-row {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .action-button {
+                width: 100%;
+                max-width: 250px;
+                justify-content: center;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="email-container">
-      <div class="header">
-        <div class="logo">NUKU</div>
-        <div class="subtitle">Administration - Gestion des candidatures</div>
-        <div class="admin-badge">🔐 ADMIN PANEL</div>
-      </div>
-
-      <div class="content">
-        <div class="notification-header">
-          <div class="notification-title">
-            🚨 Nouvelle candidature entrepreneur
-          </div>
-          <div class="notification-subtitle">
-            Une nouvelle demande d'inscription nécessite votre attention
-          </div>
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="subtitle">Administration - Gestion des candidatures</div>
+            <div class="admin-badge">🔐 ADMIN PANEL</div>
         </div>
 
-        <div class="candidate-section">
-          <div class="section-title">
-            <span class="section-icon">👤</span>
-            Informations personnelles
-          </div>
-
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label">Nom complet</div>
-              <div class="info-value">
-                {{ user.first_name }} {{ user.last_name }}
-              </div>
+        <div class="content">
+            <div class="notification-header">
+                <div class="notification-title">
+                    🚨 Nouvelle candidature entrepreneur
+                </div>
+                <div class="notification-subtitle">
+                    Une nouvelle demande d'inscription nécessite votre attention
+                </div>
             </div>
 
-            <div class="info-item">
-              <div class="info-label">Email</div>
-              <div class="info-value">{{ user.email }}</div>
+            <div class="candidate-section">
+                <div class="section-title">
+                    <span class="section-icon">👤</span>
+                    Informations personnelles
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Nom de l'entreprise</div>
+                        <div class="info-value">{{ entrepreneur.company_name }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Secteur d'activité</div>
+                        <div class="info-value">
+                            {{ entrepreneur.industry_sector or 'Non spécifié' }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Date de création</div>
+                        <div class="info-value">
+                            {{ entrepreneur.founding_date.strftime('%d/%m/%Y') if entrepreneur.founding_date else 'Non précisée' }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Site web</div>
+                        <div class="info-value">
+                            {{ entrepreneur.website_url or 'Non renseigné' }}
+                        </div>
+                    </div>
+                </div>
+
+                {% if entrepreneur.company_description %}
+                <div class="description-box">
+                    <div class="info-label">Description de l'entreprise</div>
+                    <div class="description-text">
+                        {{ entrepreneur.company_description }}
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <div class="metric-number">
+                            {{ entrepreneur.number_of_employees or 0 }}
+                        </div>
+                        <div class="metric-label">Employés</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">
+                            {{ entrepreneur.annual_revenue or 'N/A' }}
+                        </div>
+                        <div class="metric-label">CA Annuel</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">
+                            {{ entrepreneur.funding_stage or 'N/A' }}
+                        </div>
+                        <div class="metric-label">Stade financement</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-number">
+                            {{ entrepreneur.business_model or 'N/A' }}
+                        </div>
+                        <div class="metric-label">Modèle d'affaires</div>
+                    </div>
+                </div>
             </div>
 
-            <div class="info-item">
-              <div class="info-label">Téléphone</div>
-              <div class="info-value">{{ user.phone or 'Non renseigné' }}</div>
+            <div class="action-buttons">
+                <a href="{{ admin_url }}/entrepreneurs/{{ entrepreneur.entrepreneur_id }}/approve" class="action-button approve-btn">
+                    ✅ Approuver la candidature
+                </a>
+
+                <a href="{{ admin_url }}/entrepreneurs/{{ entrepreneur.entrepreneur_id }}/reject" class="action-button reject-btn">
+                    ❌ Refuser la candidature
+                </a>
+
+                <a href="{{ admin_url }}/entrepreneurs/{{ entrepreneur.entrepreneur_id }}" class="action-button review-btn">
+                    👁️ Examiner le profil complet
+                </a>
             </div>
 
-            <div class="info-item">
-              <div class="info-label">Date d'inscription</div>
-              <div class="info-value">
-                {{ user.created_at.strftime('%d/%m/%Y à %H:%M') if
-                user.created_at else 'Non disponible' }}
-              </div>
+            <div class="timestamp">
+                📅 Candidature reçue le {{ user.created_at.strftime('%d/%m/%Y à %H:%M') if user.created_at else 'date inconnue' }}
             </div>
-          </div>
         </div>
 
-        <div class="company-section">
-          <div class="section-title">
-            <span class="section-icon">🏢</span>
-            Informations entreprise
-          </div>
-
-          <div class="info-grid">
-            <div class="info-item">
-              <div class="info-label">Nom de l'entreprise</div>
-              <div class="info-value">{{ entrepreneur.company_name }}</div>
+        <div class="footer">
+            <div class="footer-text">
+                NUKU Administration - Système de notification automatique
             </div>
-
-            <div class="info-item">
-              <div class="info-label">Secteur d'activité</div>
-              <div class="info-value">
-                {{ entrepreneur.industry_sector or 'Non spécifié' }}
-              </div>
-            </div>
-
-            <div class="info-item">
-              <div class="info-label">Date de création</div>
-              <div class="info-value">
-                {{ entrepreneur.founding_date.strftime('%d/%m/%Y') if
-                entrepreneur.founding_date else 'Non précisée' }}
-              </div>
-            </div>
-          </div>
-
-          {% if entrepreneur.company_description %}
-          <div class="description-box">
-            <div class="info-label">Description de l'entreprise</div>
-            <div class="description-text">
-              {{ entrepreneur.company_description }}
-            </div>
-          </div>
-          {% endif %}
-
-          <div class="metrics-row">
-            <div class="metric-card">
-              <div class="metric-number">
-                {{ entrepreneur.number_of_employees or 0 }}
-              </div>
-              <div class="metric-label">Employés</div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-number">
-                {{ entrepreneur.annual_revenue or 'N/A' }}
-              </div>
-              <div class="metric-label">CA Annuel</div>
-            </div>
-
-            <div class="metric-card">
-              <div class="metric-number">
-                {{ entrepreneur.funding_stage or 'N/A' }}
-              </div>
-              <div class="metric-label">Stade financement</div>
-            </div>
-          </div>
         </div>
-
-        <div class="action-buttons">
-          <a
-            href="https://nuku.app/admin/entrepreneurs/{{ entrepreneur.id }}/approve"
-            class="action-button approve-btn"
-          >
-            ✅ Approuver la candidature
-          </a>
-
-          <a
-            href="https://nuku.app/admin/entrepreneurs/{{ entrepreneur.id }}/reject"
-            class="action-button reject-btn"
-          >
-            ❌ Refuser la candidature
-          </a>
-
-          <a
-            href="https://nuku.app/admin/entrepreneurs/{{ entrepreneur.id }}"
-            class="action-button review-btn"
-          >
-            👁️ Examiner le profil complet
-          </a>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div class="footer-text">
-          NUKU Administration - Système de notification automatique
-        </div>
-      </div>
     </div>
-  </body>
-</html>
+</body>
+</html>">Nom complet</div>
+                        <div class="info-value">
+                            {{ user.first_name }} {{ user.last_name }}
+                        </div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Email</div>
+                        <div class="info-value">{{ user.email }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Téléphone</div>
+                        <div class="info-value">{{ user.phone or 'Non renseigné' }}</div>
+                    </div>
+
+                    <div class="info-item">
+                        <div class="info-label">Date d'inscription</div>
+                        <div class="info-value">
+                            {{ user.created_at.strftime('%d/%m/%Y à %H:%M') if user.created_at else 'Non disponible' }}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="company-section">
+                <div class="section-title">
+                    <span class="section-icon">🏢</span>
+                    Informations entreprise
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label

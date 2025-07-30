@@ -123,3 +123,52 @@ def delete_expert(expert_id: UUID, db: Session = Depends(get_db)):
     db.delete(expert)
     db.commit()
     return {"message": "Expert supprimé avec succès"}
+
+@router.put("/users/{user_id}/activate", dependencies=[Depends(require_admin)])
+def activate_user(user_id: UUID, db: Session = Depends(get_db)):
+    """Activer un utilisateur"""
+    user = get_user_by_id(db, str(user_id))
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    user.status = UserStatus.active
+    db.commit()
+    
+    return {"message": "Utilisateur activé avec succès", "user_id": str(user_id)}
+
+@router.put("/users/{user_id}/deactivate", dependencies=[Depends(require_admin)])
+def deactivate_user(user_id: UUID, db: Session = Depends(get_db)):
+    """Désactiver un utilisateur"""
+    user = get_user_by_id(db, str(user_id))
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    user.status = UserStatus.inactive
+    db.commit()
+    
+    return {"message": "Utilisateur désactivé avec succès", "user_id": str(user_id)}
+
+@router.get("/users/{user_id}", response_model=UserResponse, dependencies=[Depends(require_admin)])
+def get_user_details(user_id: UUID, db: Session = Depends(get_db)):
+    """Récupérer les détails d'un utilisateur spécifique"""
+    user = get_user_by_id(db, str(user_id))
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    return user
+
+@router.put("/users/{user_id}", response_model=UserResponse, dependencies=[Depends(require_admin)])
+def update_user(user_id: UUID, user_data: dict, db: Session = Depends(get_db)):
+    """Mettre à jour un utilisateur"""
+    user = get_user_by_id(db, str(user_id))
+    if not user:
+        raise HTTPException(status_code=404, detail="Utilisateur introuvable")
+    
+    # Mise à jour des champs autorisés
+    for field, value in user_data.items():
+        if hasattr(user, field) and field not in ['user_id', 'created_at', 'password_hash']:
+            setattr(user, field, value)
+    
+    db.commit()
+    
+    return user

@@ -1,196 +1,272 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Activez votre compte NUKU</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #f8f9fa;
-      }
-
-      .email-container {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 40px 30px;
-        text-align: center;
-      }
-
-      .logo {
-        font-size: 32px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        letter-spacing: 2px;
-      }
-
-      .subtitle {
-        font-size: 16px;
-        opacity: 0.9;
-        font-weight: 300;
-      }
-
-      .content {
-        padding: 40px 30px;
-      }
-
-      .welcome-message {
-        font-size: 24px;
-        color: #2c3e50;
-        margin-bottom: 20px;
-        font-weight: 600;
-      }
-
-      .message-text {
-        font-size: 16px;
-        color: #5a6c7d;
-        margin-bottom: 30px;
-        line-height: 1.7;
-      }
-
-      .cta-button {
-        display: inline-block;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        padding: 16px 32px;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 16px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
-      }
-
-      .cta-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-      }
-
-      .button-container {
-        text-align: center;
-        margin: 30px 0;
-      }
-
-      .footer {
-        background-color: #f8f9fa;
-        padding: 30px;
-        text-align: center;
-        border-top: 1px solid #e9ecef;
-      }
-
-      .footer-text {
-        font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 15px;
-      }
-
-      .footer-links {
-        font-size: 12px;
-        color: #adb5bd;
-      }
-
-      .footer-links a {
-        color: #667eea;
-        text-decoration: none;
-        margin: 0 10px;
-      }
-
-      .icon {
-        width: 24px;
-        height: 24px;
-        display: inline-block;
-        vertical-align: middle;
-        margin-right: 8px;
-      }
-
-      @media (max-width: 600px) {
-        .email-container {
-          margin: 0 10px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .content {
-          padding: 30px 20px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
         }
 
         .header {
-          padding: 30px 20px;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 32px 24px;
         }
 
         .welcome-message {
-          font-size: 20px;
+            font-size: 22px;
+            color: #1a365d;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .activation-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .activation-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .activation-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
         }
 
         .cta-button {
-          padding: 14px 28px;
-          font-size: 15px;
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: opacity 0.2s ease;
+            margin: 16px 0;
         }
-      }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .link-fallback {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 16px;
+            margin: 24px 0;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .link-text {
+            word-break: break-all;
+            color: #2b7a8b;
+            font-family: monospace;
+            background: white;
+            padding: 8px;
+            border-radius: 4px;
+            margin-top: 8px;
+        }
+
+        .benefits-section {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .benefits-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .benefit-icon {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .welcome-message {
+                font-size: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="email-container">
-      <div class="header">
-        <div class="logo">NUKU</div>
-        <div class="subtitle">Accélération des MPME</div>
-      </div>
-
-      <div class="content">
-        <div class="welcome-message">🎉 Bienvenue {{ full_name }} !</div>
-
-        <div class="message-text">
-          Félicitations ! Votre compte NUKU est presque prêt. Il ne vous reste
-          plus qu'une étape pour rejoindre notre communauté d'entrepreneurs et
-          d'experts dédiés au développement des micro, petites et moyennes
-          entreprises.
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="subtitle">Plateforme d'accélération des MPME</div>
         </div>
 
-        <div class="message-text">
-          Cliquez sur le bouton ci-dessous pour activer votre compte et
-          commencer votre parcours d'accélération avec NUKU :
+        <div class="content">
+            <div class="welcome-message">
+                Bienvenue {{ full_name }} ! 🎉
+            </div>
+
+            <div class="message-text">
+                Félicitations ! Votre compte NUKU est presque prêt. Il ne vous reste plus qu'une étape pour rejoindre notre communauté d'entrepreneurs et d'experts dédiés au développement des micro, petites et moyennes entreprises.
+            </div>
+
+            <div class="activation-card">
+                <div class="activation-icon">✨</div>
+                <div class="activation-title">Activez votre compte</div>
+                <div class="message-text" style="margin-bottom: 20px; font-size: 14px;">
+                    Cliquez sur le bouton ci-dessous pour activer votre compte et commencer votre parcours d'accélération.
+                </div>
+                
+                <a href="{{ link }}" class="cta-button">
+                    Activer mon compte
+                </a>
+            </div>
+
+            <div class="benefits-section">
+                <div class="benefits-title">🚀 Ce qui vous attend</div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">💡</span>
+                    <span>Programmes d'accompagnement personnalisés</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">📚</span>
+                    <span>Modules de formation interactifs</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">🤝</span>
+                    <span>Échanges avec des experts sectoriels</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">📊</span>
+                    <span>Tableau de bord de suivi personnalisé</span>
+                </div>
+            </div>
+
+            <div class="link-fallback">
+                Si le bouton ne fonctionne pas, copiez et collez ce lien dans votre navigateur :
+                <div class="link-text">{{ link }}</div>
+            </div>
         </div>
 
-        <div class="button-container">
-          <a href="{{ link }}" class="cta-button"> ✨ Activer mon compte </a>
+        <div class="footer">
+            <div class="footer-text">
+                Vous recevez cet email car vous vous êtes inscrit sur la plateforme NUKU.
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}">Accueil</a> | 
+                <a href="{{ frontend_url }}/support">Support</a> | 
+                <a href="{{ frontend_url }}/contact">Contact</a>
+            </div>
         </div>
-
-        <div
-          class="message-text"
-          style="font-size: 14px; color: #8b95a1; margin-top: 30px"
-        >
-          Si le bouton ne fonctionne pas, vous pouvez copier et coller ce lien
-          dans votre navigateur :<br />
-          <span style="word-break: break-all; color: #667eea">{{ link }}</span>
-        </div>
-      </div>
-
-      <div class="footer">
-        <div class="footer-text">
-          Vous recevez cet email car vous vous êtes inscrit sur la plateforme
-          NUKU.
-        </div>
-        <div class="footer-links">
-          <a href="#">Conditions d'utilisation</a> |
-          <a href="#">Politique de confidentialité</a> |
-          <a href="#">Nous contacter</a>
-        </div>
-      </div>
     </div>
-  </body>
+</body>
 </html>

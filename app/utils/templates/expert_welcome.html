@@ -1,291 +1,345 @@
 <!DOCTYPE html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bienvenue Expert NUKU</title>
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      body {
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-        line-height: 1.6;
-        color: #333;
-        background-color: #f8f9fa;
-      }
-
-      .email-container {
-        max-width: 600px;
-        margin: 0 auto;
-        background-color: #ffffff;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      }
-
-      .header {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 40px 30px;
-        text-align: center;
-      }
-
-      .logo {
-        font-size: 32px;
-        font-weight: bold;
-        margin-bottom: 10px;
-        letter-spacing: 2px;
-      }
-
-      .subtitle {
-        font-size: 16px;
-        opacity: 0.9;
-        font-weight: 300;
-      }
-
-      .expert-badge {
-        background: rgba(255, 255, 255, 0.2);
-        display: inline-block;
-        padding: 8px 16px;
-        border-radius: 20px;
-        font-size: 14px;
-        font-weight: 500;
-        margin-top: 15px;
-        backdrop-filter: blur(10px);
-      }
-
-      .content {
-        padding: 40px 30px;
-      }
-
-      .welcome-message {
-        font-size: 24px;
-        color: #2c3e50;
-        margin-bottom: 20px;
-        font-weight: 600;
-      }
-
-      .message-text {
-        font-size: 16px;
-        color: #5a6c7d;
-        margin-bottom: 25px;
-        line-height: 1.7;
-      }
-
-      .credentials-box {
-        background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-        border-radius: 10px;
-        padding: 25px;
-        margin: 25px 0;
-        border-left: 4px solid #f5576c;
-      }
-
-      .credentials-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #8b4513;
-        margin-bottom: 15px;
-        display: flex;
-        align-items: center;
-      }
-
-      .temp-password {
-        background: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        font-family: "Courier New", monospace;
-        font-size: 18px;
-        font-weight: bold;
-        color: #d63384;
-        text-align: center;
-        margin: 10px 0;
-        border: 2px dashed #f5576c;
-      }
-
-      .security-warning {
-        font-size: 14px;
-        color: #8b4513;
-        background: rgba(255, 255, 255, 0.7);
-        padding: 12px;
-        border-radius: 6px;
-        margin-top: 15px;
-      }
-
-      .cta-button {
-        display: inline-block;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        padding: 16px 32px;
-        text-decoration: none;
-        border-radius: 8px;
-        font-weight: 600;
-        font-size: 16px;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3);
-      }
-
-      .cta-button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 25px rgba(245, 87, 108, 0.4);
-      }
-
-      .button-container {
-        text-align: center;
-        margin: 30px 0;
-      }
-
-      .features-list {
-        background: #f8f9fa;
-        border-radius: 10px;
-        padding: 25px;
-        margin: 25px 0;
-      }
-
-      .features-title {
-        font-size: 18px;
-        font-weight: 600;
-        color: #495057;
-        margin-bottom: 15px;
-      }
-
-      .feature-item {
-        display: flex;
-        align-items: center;
-        margin-bottom: 12px;
-        font-size: 15px;
-        color: #6c757d;
-      }
-
-      .feature-icon {
-        width: 20px;
-        height: 20px;
-        margin-right: 12px;
-        color: #f5576c;
-      }
-
-      .footer {
-        background-color: #f8f9fa;
-        padding: 30px;
-        text-align: center;
-        border-top: 1px solid #e9ecef;
-      }
-
-      .footer-text {
-        font-size: 14px;
-        color: #6c757d;
-        margin-bottom: 15px;
-      }
-
-      .footer-links {
-        font-size: 12px;
-        color: #adb5bd;
-      }
-
-      .footer-links a {
-        color: #f5576c;
-        text-decoration: none;
-        margin: 0 10px;
-      }
-
-      @media (max-width: 600px) {
-        .email-container {
-          margin: 0 10px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .content {
-          padding: 30px 20px;
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
         }
 
         .header {
-          padding: 30px 20px;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .expert-badge {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content {
+            padding: 32px 24px;
         }
 
         .welcome-message {
-          font-size: 20px;
+            font-size: 22px;
+            color: #1a365d;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .credentials-box {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-left: 4px solid #2b7a8b;
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .credentials-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .temp-password {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: #1a365d;
+            text-align: center;
+            margin: 16px 0;
+            border: 2px dashed #2b7a8b;
+        }
+
+        .security-warning {
+            font-size: 14px;
+            color: #d69e2e;
+            background: #fffbf0;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 16px;
+            border-left: 3px solid #d69e2e;
         }
 
         .cta-button {
-          padding: 14px 28px;
-          font-size: 15px;
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 16px 32px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: opacity 0.2s ease;
         }
-      }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 32px 0;
+        }
+
+        .features-list {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .features-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .feature-icon {
+            margin-right: 12px;
+            font-size: 16px;
+            color: #2b7a8b;
+        }
+
+        .responsibilities-section {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .responsibilities-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .responsibility-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .responsibility-icon {
+            margin-right: 12px;
+            margin-top: 2px;
+            font-size: 16px;
+            color: #2b7a8b;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .welcome-message {
+                font-size: 20px;
+            }
+
+            .cta-button {
+                padding: 14px 28px;
+                font-size: 15px;
+            }
+        }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <div class="email-container">
-      <div class="header">
-        <div class="logo">NUKU</div>
-        <div class="subtitle">Accélération des MPME</div>
-        <div class="expert-badge">👨‍💼 Espace Expert</div>
-      </div>
-
-      <div class="content">
-        <div class="welcome-message">🚀 Bienvenue {{ full_name }} !</div>
-
-        <div class="message-text">
-          Nous sommes ravis de vous accueillir en tant qu'expert sur la
-          plateforme NUKU ! Votre expertise sera précieuse pour accompagner les
-          entrepreneurs dans leur parcours de croissance.
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="subtitle">Plateforme d'accélération des MPME</div>
+            <div class="expert-badge">👨‍💼 Espace Expert</div>
         </div>
 
-        <div class="credentials-box">
-          <div class="credentials-title">🔐 Vos identifiants de connexion</div>
-          <div style="margin-bottom: 10px; color: #8b4513; font-weight: 500">
-            Mot de passe temporaire :
-          </div>
-          <div class="temp-password">{{ temp_password }}</div>
-          <div class="security-warning">
-            ⚠️ <strong>Important :</strong> Veuillez modifier ce mot de passe
-            dès votre première connexion pour sécuriser votre compte.
-          </div>
+        <div class="content">
+            <div class="welcome-message">🚀 Bienvenue {{ full_name }} !</div>
+
+            <div class="message-text">
+                Nous sommes ravis de vous accueillir en tant qu'expert sur la plateforme NUKU ! Votre expertise sera précieuse pour accompagner les entrepreneurs dans leur parcours de croissance.
+            </div>
+
+            <div class="credentials-box">
+                <div class="credentials-title">🔐 Vos identifiants de connexion</div>
+                <div style="margin-bottom: 12px; color: #4a5568; font-weight: 500; font-size: 14px;">
+                    Mot de passe temporaire :
+                </div>
+                <div class="temp-password">{{ temp_password }}</div>
+                <div class="security-warning">
+                    ⚠️ <strong>Important :</strong> Veuillez modifier ce mot de passe dès votre première connexion pour sécuriser votre compte.
+                </div>
+            </div>
+
+            <div class="features-list">
+                <div class="features-title">🎯 Vos outils d'expert</div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Tableau de bord de suivi des entrepreneurs</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Outils de planification de sessions</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Système de messagerie intégré</span>
+                </div>
+                
+                <div class="feature-item">
+                    <span class="feature-icon">✓</span>
+                    <span>Accès aux analytics et rapports</span>
+                </div>
+            </div>
+
+            <div class="responsibilities-section">
+                <div class="responsibilities-title">💼 Vos responsabilités</div>
+                
+                <div class="responsibility-item">
+                    <span class="responsibility-icon">🤝</span>
+                    <span>Accompagner les entrepreneurs assignés dans leurs projets</span>
+                </div>
+                
+                <div class="responsibility-item">
+                    <span class="responsibility-icon">📅</span>
+                    <span>Animer des sessions de mentoring régulières</span>
+                </div>
+                
+                <div class="responsibility-item">
+                    <span class="responsibility-icon">📊</span>
+                    <span>Suivre les progrès et fournir des feedbacks constructifs</span>
+                </div>
+                
+                <div class="responsibility-item">
+                    <span class="responsibility-icon">🎓</span>
+                    <span>Partager votre expertise à travers des contenus formatifs</span>
+                </div>
+            </div>
+
+            <div class="button-container">
+                <a href="{{ frontend_url }}/login" class="cta-button">
+                    🚪 Accéder à mon espace expert
+                </a>
+            </div>
+
+            <div class="message-text" style="font-size: 14px; color: #718096; margin-top: 24px;">
+                Si vous avez des questions ou besoin d'assistance, notre équipe support est disponible pour vous accompagner dans cette nouvelle aventure.
+            </div>
         </div>
 
-        <div class="features-list">
-          <div class="features-title">🎯 Ce que vous pouvez faire :</div>
-          <div class="feature-item">
-            <span class="feature-icon">✅</span>
-            Accompagner les entrepreneurs dans leurs projets
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✅</span>
-            Participer aux sessions de mentoring
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✅</span>
-            Accéder aux outils d'analyse et de suivi
-          </div>
-          <div class="feature-item">
-            <span class="feature-icon">✅</span>
-            Collaborer avec d'autres experts
-          </div>
+        <div class="footer">
+            <div class="footer-text">
+                Merci de rejoindre la communauté NUKU en tant qu'expert !
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}/expert-guide">Guide expert</a> | 
+                <a href="{{ frontend_url }}/support">Support technique</a> | 
+                <a href="{{ frontend_url }}/contact">Nous contacter</a>
+            </div>
         </div>
-
-        <div class="button-container">
-          <a href="http://localhost:5173/login" class="cta-button">
-            🚪 Accéder à mon espace
-          </a>
-        </div>
-
-        <div class="message-text" style="font-size: 14px; color: #8b95a1">
-          Si vous avez des questions ou besoin d'assistance, notre équipe
-          support est disponible pour vous accompagner dans cette nouvelle
-          aventure.
-        </div>
-      </div>
-
-      <div class="footer">
-        <div class="footer-text">
-          Merci de rejoindre la communauté NUKU en tant qu'expert !
-        </div>
-        <div class="footer-links">
-          <a href="#">Guide expert</a> | <a href="#">Support technique</a> |
-          <a href="#">Nous contacter</a>
-        </div>
-      </div>
     </div>
-  </body>
+</body>
 </html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nouveau message - NUKU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .notification-badge {
+            background: linear-gradient(135deg, #3182ce 0%, #2b7a8b 100%);
+            color: white;
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .message {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .message-card {
+            background: #f7fafc;
+            border-left: 4px solid #2b7a8b;
+            border-radius: 0 8px 8px 0;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .sender-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .sender-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+            margin-right: 16px;
+        }
+
+        .sender-details h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 4px;
+        }
+
+        .sender-details .role {
+            font-size: 13px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .message-preview {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 16px;
+            font-size: 15px;
+            color: #2d3748;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        .action-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 24px 0 16px 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .action-button:hover {
+            opacity: 0.9;
+        }
+
+        .quick-actions {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .quick-actions-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 12px;
+        }
+
+        .action-link {
+            display: inline-block;
+            color: #2b7a8b;
+            text-decoration: none;
+            font-size: 14px;
+            margin-right: 16px;
+            font-weight: 500;
+        }
+
+        .action-link:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .message-card {
+                padding: 20px;
+            }
+
+            .sender-info {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .sender-avatar {
+                margin-right: 0;
+                margin-bottom: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="header-subtitle">Plateforme d'accélération des MPME</div>
+        </div>
+
+        <div class="content">
+            <div class="notification-badge">
+                💌 Nouveau message
+            </div>
+
+            <div class="greeting">
+                Bonjour {{ full_name }},
+            </div>
+
+            <div class="message">
+                Vous avez reçu un nouveau message sur votre plateforme NUKU :
+            </div>
+
+            <div class="message-card">
+                <div class="sender-info">
+                    <div class="sender-avatar">
+                        {{ sender_name[0]|upper }}
+                    </div>
+                    <div class="sender-details">
+                        <h3>{{ sender_name }}</h3>
+                        <div class="role">Membre NUKU</div>
+                    </div>
+                </div>
+
+                <div class="message-preview">
+                    "{{ message_preview }}"
+                </div>
+            </div>
+
+            <a href="{{ frontend_url }}/messages" class="action-button">
+                Lire le message complet
+            </a>
+
+            <div class="quick-actions">
+                <div class="quick-actions-title">Actions rapides</div>
+                <a href="{{ frontend_url }}/messages" class="action-link">📬 Voir tous mes messages</a>
+                <a href="{{ frontend_url }}/messages/compose" class="action-link">✏️ Composer un message</a>
+            </div>
+
+            <div class="message" style="font-size: 14px; color: #718096; margin-top: 24px;">
+                Vous recevez cette notification car vous avez activé les alertes email pour les nouveaux messages.
+                Vous pouvez modifier vos préférences dans les paramètres de votre compte.
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                Restez connecté avec votre communauté NUKU !
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}">Tableau de bord</a> | 
+                <a href="{{ frontend_url }}/settings">Préférences</a> | 
+                <a href="{{ frontend_url }}/support">Support</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

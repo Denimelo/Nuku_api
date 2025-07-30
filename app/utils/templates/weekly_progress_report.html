@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport hebdomadaire - NUKU</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .report-badge {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 16px;
+            backdrop-filter: blur(10px);
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .greeting {
+            font-size: 18px;
+            color: #1a365d;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        .intro-text {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .stat-card {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2b7a8b;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #4a5568;
+            font-weight: 500;
+        }
+
+        .progress-section {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-icon {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        .progress-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .progress-icon {
+            margin-right: 12px;
+            font-size: 16px;
+        }
+
+        .achievements-section {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-left: 4px solid #38a169;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .achievements-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #22543d;
+            margin-bottom: 16px;
+        }
+
+        .achievement-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #22543d;
+        }
+
+        .achievement-icon {
+            margin-right: 8px;
+            font-size: 16px;
+        }
+
+        .next-session-card {
+            background: #fff5f5;
+            border: 1px solid #feb2b2;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .next-session-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #c53030;
+            margin-bottom: 12px;
+        }
+
+        .session-details {
+            font-size: 14px;
+            color: #c53030;
+            margin-bottom: 16px;
+        }
+
+        .session-button {
+            display: inline-block;
+            background: #c53030;
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s ease;
+        }
+
+        .session-button:hover {
+            opacity: 0.9;
+        }
+
+        .cta-section {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 15px;
+            color: #4a5568;
+            margin-bottom: 16px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 14px 28px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: opacity 0.2s ease;
+        }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .tips-section {
+            background: #fffbf0;
+            border: 1px solid #f6e05e;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .tips-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #744210;
+            margin-bottom: 16px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #744210;
+        }
+
+        .tip-icon {
+            margin-right: 8px;
+            margin-top: 2px;
+            font-size: 14px;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .stat-number {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <div class="logo">NUKU</div>
+            <div class="subtitle">Plateforme d'accélération des MPME</div>
+            <div class="report-badge">📊 Rapport hebdomadaire</div>
+        </div>
+
+        <div class="content">
+            <div class="greeting">
+                Bonjour {{ full_name }},
+            </div>
+
+            <div class="intro-text">
+                Voici votre rapport d'activité de la semaine. Continuez sur cette lancée, vous progressez bien dans votre parcours d'accélération !
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">{{ completed_modules }}</div>
+                    <div class="stat-label">Modules terminés</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-number">{{ pending_assignments }}</div>
+                    <div class="stat-label">Devoirs en attente</div>
+                </div>
+            </div>
+
+            <div class="achievements-section">
+                <div class="achievements-title">🏆 Réalisations de la semaine</div>
+                
+                {% if completed_modules > 0 %}
+                <div class="achievement-item">
+                    <span class="achievement-icon">✅</span>
+                    <span>{{ completed_modules }} module(s) de formation complété(s)</span>
+                </div>
+                {% endif %}
+                
+                <div class="achievement-item">
+                    <span class="achievement-icon">📚</span>
+                    <span>Participation active au programme d'accélération</span>
+                </div>
+                
+                <div class="achievement-item">
+                    <span class="achievement-icon">💪</span>
+                    <span>Engagement constant dans votre développement</span>
+                </div>
+            </div>
+
+            <div class="progress-section">
+                <div class="section-title">
+                    <span class="section-icon">📈</span>
+                    Votre progression
+                </div>
+
+                <div class="progress-item">
+                    <span class="progress-icon">📊</span>
+                    <span>Avancement global du programme en cours</span>
+                </div>
+
+                {% if pending_assignments > 0 %}
+                <div class="progress-item">
+                    <span class="progress-icon">⏰</span>
+                    <span>{{ pending_assignments }} devoir(s) à compléter pour continuer</span>
+                </div>
+                {% endif %}
+
+                <div class="progress-item">
+                    <span class="progress-icon">🎯</span>
+                    <span>Objectifs de la semaine prochaine définis</span>
+                </div>
+            </div>
+
+            {% if next_session %}
+            <div class="next-session-card">
+                <div class="next-session-title">📅 Prochaine session</div>
+                <div class="session-details">
+                    {{ next_session }}
+                </div>
+                <a href="{{ frontend_url }}/sessions" class="session-button">
+                    Voir les détails
+                </a>
+            </div>
+            {% endif %}
+
+            <div class="tips-section">
+                <div class="tips-title">💡 Conseils de la semaine</div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">🎯</span>
+                    <span>Fixez-vous des objectifs SMART pour la semaine prochaine</span>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">📱</span>
+                    <span>Utilisez votre tableau de bord pour suivre vos progrès quotidiens</span>
+                </div>
+                
+                <div class="tip-item">
+                    <span class="tip-icon">🤝</span>
+                    <span>N'hésitez pas à solliciter votre expert pour des conseils</span>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <div class="cta-text">
+                    Continuez sur votre lancée et consultez votre tableau de bord pour plus de détails
+                </div>
+                <a href="{{ frontend_url }}/dashboard" class="cta-button">
+                    📊 Voir mon tableau de bord
+                </a>
+            </div>
+
+            <div class="intro-text" style="font-size: 14px; color: #718096; margin-top: 24px; text-align: center;">
+                Vous recevez ce rapport automatiquement chaque semaine. Bonne continuation dans votre parcours entrepreneurial !
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-text">
+                Équipe NUKU - Votre succès est notre priorité
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}">Tableau de bord</a> | 
+                <a href="{{ frontend_url }}/programs">Mes programmes</a> | 
+                <a href="{{ frontend_url }}/support">Support</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

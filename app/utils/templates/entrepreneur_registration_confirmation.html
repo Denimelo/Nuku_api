@@ -1,73 +1,362 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inscription reçue - NUKU</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
-        .header { text-align: center; margin-bottom: 30px; }
-        .logo { color: #2563eb; font-size: 28px; font-weight: bold; }
-        .icon { font-size: 48px; margin: 20px 0; }
-        .message { font-size: 16px; line-height: 1.6; color: #333; }
-        .highlight { background: #f0f9ff; padding: 15px; border-left: 4px solid #2563eb; margin: 20px 0; }
-        .timeline { background: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .footer { margin-top: 30px; text-align: center; color: #666; font-size: 14px; }
-        .cta { text-align: center; margin: 30px 0; }
-        .button { 
-            display: inline-block; 
-            background: #2563eb; 
-            color: white; 
-            padding: 12px 24px; 
-            border-radius: 6px; 
-            text-decoration: none; 
-            font-weight: bold; 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f8fafc;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(26, 54, 93, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 32px 24px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .content {
+            padding: 32px 24px;
+        }
+
+        .success-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-size: 22px;
+            color: #1a365d;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .message-text {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .company-highlight {
+            background: #f7fafc;
+            border: 2px solid #e2e8f0;
+            border-left: 4px solid #2b7a8b;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .company-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 8px;
+        }
+
+        .company-status {
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .timeline-box {
+            background: #edf2f7;
+            border-radius: 6px;
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .timeline-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .timeline-content {
+            font-size: 14px;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+
+        .process-steps {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+        }
+
+        .process-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .step-number {
+            background: #2b7a8b;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: bold;
+            margin-right: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .benefits-list {
+            margin: 24px 0;
+        }
+
+        .benefits-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a365d;
+            margin-bottom: 16px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #4a5568;
+        }
+
+        .benefit-icon {
+            margin-right: 12px;
+            font-size: 16px;
+            color: #2b7a8b;
+        }
+
+        .cta-section {
+            background: #f7fafc;
+            border-radius: 6px;
+            padding: 20px;
+            margin: 24px 0;
+            text-align: center;
+        }
+
+        .cta-text {
+            font-size: 14px;
+            color: #4a5568;
+            margin-bottom: 16px;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #1a365d 0%, #2b7a8b 100%);
+            color: white;
+            padding: 12px 24px;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: opacity 0.2s ease;
+        }
+
+        .cta-button:hover {
+            opacity: 0.9;
+        }
+
+        .footer {
+            background-color: #f7fafc;
+            padding: 24px;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 8px;
+        }
+
+        .footer-links {
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .footer-links a {
+            color: #2b7a8b;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        @media (max-width: 600px) {
+            .email-container {
+                margin: 0 16px;
+            }
+
+            .content {
+                padding: 24px 16px;
+            }
+
+            .header {
+                padding: 24px 16px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="email-container">
         <div class="header">
             <div class="logo">NUKU</div>
-            <div class="icon">✅</div>
-            <h2>Inscription reçue avec succès !</h2>
+            <div class="subtitle">Plateforme d'accélération des MPME</div>
         </div>
-        
-        <div class="message">
-            <p>Bonjour <strong>{{ full_name }}</strong>,</p>
-            
-            <p>Nous avons bien reçu votre demande d'inscription à la plateforme NUKU pour votre entreprise <strong>{{ company_name }}</strong>.</p>
-            
-            <div class="highlight">
-                <strong>📋 Prochaines étapes :</strong><br>
-                Notre équipe va examiner votre dossier et vérifier les informations fournies dans les <strong>48 heures</strong> qui suivent.
+
+        <div class="content">
+            <div class="success-header">
+                <div class="success-icon">✅</div>
+                <div class="success-title">Inscription reçue avec succès !</div>
             </div>
-            
-            <div class="timeline">
-                <h3>🕒 Processus de validation :</h3>
-                <p><strong>1.</strong> Vérification de vos informations (en cours)<br>
-                <strong>2.</strong> Validation de votre profil entreprise<br>
-                <strong>3.</strong> Activation de votre compte<br>
-                <strong>4.</strong> Accès aux programmes d'accélération</p>
+
+            <div class="message-text">
+                Bonjour <strong>{{ full_name }}</strong>,
             </div>
-            
-            <p>Une fois votre inscription validée, vous recevrez un email de confirmation et pourrez accéder à :</p>
-            <ul>
-                <li>🎯 Programmes d'accompagnement personnalisés</li>
-                <li>📚 Modules de formation</li>
-                <li>💬 Échanges avec des experts</li>
-                <li>📊 Tableau de bord de suivi</li>
-            </ul>
+
+            <div class="message-text">
+                Nous avons bien reçu votre demande d'inscription à la plateforme NUKU pour votre entreprise.
+            </div>
+
+            <div class="company-highlight">
+                <div class="company-name">{{ company_name }}</div>
+                <div class="company-status">Candidature en cours d'examen</div>
+            </div>
+
+            <div class="timeline-box">
+                <div class="timeline-title">
+                    📋 Prochaines étapes
+                </div>
+                <div class="timeline-content">
+                    Notre équipe va examiner votre dossier et vérifier les informations fournies dans les <strong>48 heures</strong> qui suivent. Vous recevrez une notification par email dès que l'examen sera terminé.
+                </div>
+            </div>
+
+            <div class="process-steps">
+                <div class="process-title">🔄 Processus de validation</div>
+                
+                <div class="step-item">
+                    <div class="step-number">1</div>
+                    <div><strong>Vérification des informations</strong> (en cours)</div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">2</div>
+                    <div><strong>Validation du profil entreprise</strong></div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">3</div>
+                    <div><strong>Activation de votre compte</strong></div>
+                </div>
+                
+                <div class="step-item">
+                    <div class="step-number">4</div>
+                    <div><strong>Accès aux programmes d'accélération</strong></div>
+                </div>
+            </div>
+
+            <div class="benefits-list">
+                <div class="benefits-title">🚀 Une fois validé, vous aurez accès à</div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">🎯</span>
+                    <span>Programmes d'accompagnement personnalisés</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">📚</span>
+                    <span>Modules de formation interactifs</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">💬</span>
+                    <span>Échanges directs avec des experts</span>
+                </div>
+                
+                <div class="benefit-item">
+                    <span class="benefit-icon">📊</span>
+                    <span>Tableau de bord de suivi de progression</span>
+                </div>
+            </div>
+
+            <div class="cta-section">
+                <div class="cta-text">
+                    En attendant, vous pouvez préparer votre parcours entrepreneurial :
+                </div>
+                <a href="{{ frontend_url }}/preparation" class="cta-button">
+                    📖 Guide de préparation
+                </a>
+            </div>
+
+            <div class="message-text" style="font-size: 14px; color: #718096; margin-top: 24px;">
+                <strong>Questions ?</strong> Notre équipe est à votre disposition à l'adresse {{ admin_email }}
+            </div>
         </div>
-        
-        <div class="cta">
-            <p>En attendant, vous pouvez préparer vos documents :</p>
-            <a href="{{ frontend_url }}/preparation" class="button">Guide de préparation</a>
-        </div>
-        
+
         <div class="footer">
-            <p><strong>Questions ?</strong> Contactez-nous à {{ admin_email }}</p>
-            <p>Équipe NUKU - Accélération des MPME</p>
+            <div class="footer-text">
+                Équipe NUKU - Nous accompagnons votre croissance
+            </div>
+            <div class="footer-links">
+                <a href="{{ frontend_url }}">Accueil</a> | 
+                <a href="{{ frontend_url }}/faq">FAQ</a> | 
+                <a href="{{ frontend_url }}/contact">Contact</a>
+            </div>
         </div>
     </div>
 </body>
