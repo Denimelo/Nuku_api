@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import and_, or_
-from uuid import UUID
+from uuid import UUID, uuid4
 from typing import List, Optional, Dict, Any
 from datetime import datetime, date
 from app.models.expert import Expert
@@ -10,12 +10,13 @@ from app.models.programParticipant import ProgramParticipant
 from app.schemas.expert import ExpertCreate, ExpertUpdate
 from app.utils.security import hash_password, generate_temporary_password
 from app.utils.url_to_str import optional_str
+from app.utils.uuid import uuid_column
 
 def create_expert(db: Session, data: ExpertCreate, temp_password: str) -> Expert:
     """Créer un expert avec utilisateur associé"""
     # Créer utilisateur
     user = User(
-        user_id=UUID(),
+        user_id=uuid4(),
         first_name=data.user.first_name,
         last_name=data.user.last_name,
         email=data.user.email,
