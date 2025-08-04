@@ -20,6 +20,10 @@ from app.crud.program import (
     leave_program, get_participation_by_ids, update_participation_status
 )
 from app.crud.entrepreneur import get_entrepreneur_by_user_id
+from app.models.program_participant import ProgramParticipant
+from app.models.program_expert import ProgramExpert
+from app.models.expert import Expert
+from app.crud.expert import get_expert
 
 router = APIRouter(prefix="/programs", tags=["Programs"])
 
@@ -331,3 +335,270 @@ def get_program_statistics(
         dropped_participants=dropped,
         completion_rate=round(completion_rate, 2)
     )
+
+    # ========== GESTION DES EXPERTS ASSIGNÉS ==========
+
+@router.get("/{program_id}/experts", response_model=List[dict])
+def get_program_experts(
+    program_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """📋 Liste des experts assignés à un programme (Admin)"""
+    
+    program = get_program(db, program_id)
+    if not program:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Programme non trouvé"
+        )
+    
+    experts = db.query(ProgramExpert).filter(
+        ProgramExpert.program_id == program_id
+    ).all()
+    
+    # Enrichir avec les données des experts
+    result = []
+    for assignment in experts:
+        expert = get_expert(db, assignment.expert_id)
+        if expert:
+            result.append({
+                "program_expert_id": str(assignment.program_expert_id),
+                "program_id": str(assignment.program_id),
+                "expert_id": str(assignment.expert_id),
+                "role": assignment.role,
+                "assigned_at": assignment.assigned_at.isoformat(),
+                "expert": {
+                    "expert_id": str(expert.expert_id),
+                    "user": {
+                        "first_name": expert.user.first_name,
+                        "last_name": expert.user.last_name,
+                        "email": expert.user.email
+                    },
+                    "specialization": expert.specialization,
+                    "years_of_experience": expert.years_of_experience,
+                    "bio": expert.bio
+                }
+            })
+    
+    return result
+
+@router.post("/{program_id}/experts")
+def assign_expert_to_program(
+    program_id: UUID,
+    assignment_data: dict,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """➕ Assigner un expert à un programme (Admin)"""
+    
+    expert_id = assignment_data.get("expert_id")
+    role = assignment_data.get("role", "mentor")
+    
+    if not expert_id:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="ID de l'expert requis"
+        )
+    
+    # Vérifier que le programme existe
+    program = get_program(db, program_id)
+    if not program:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Programme non trouvé"
+        )
+    
+    # Vérifier que l'expert existe
+    expert = get_expert(db, expert_id)
+    if not expert:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Expert non trouvé"
+        )
+    
+    # Vérifier que l'expert n'est pas déjà assigné à ce programme
+    existing = db.query(ProgramExpert).filter(
+        ProgramExpert.program_id == program_id,
+        ProgramExpert.expert_id == expert_id
+    ).first()
+    
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cet expert est déjà assigné à ce programme"
+        )
+    
+    # Créer l'assignation
+    assignment = ProgramExpert(
+        program_id=program_id,
+        expert_id=expert_id,
+        role=role,
+        assigned_by=current_user.user_id
+    )
+    
+    db.add(assignment)
+    db.commit()
+    db.refresh(assignment)
+    
+    return {
+        "message": "Expert assigné avec succès",
+        "assignment": {
+            "program_expert_id": str(assignment.program_expert_id),
+            "program_id": str(assignment.program_id),
+            "expert_id": str(assignment.expert_id),
+            "role": assignment.role,
+            "assigned_at": assignment.assigned_at.isoformat()
+        }
+    }
+
+@router.delete("/{program_id}/experts/{expert_id}")
+def remove_expert_from_program(
+    program_id: UUID,
+    expert_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """🗑️ Retirer un expert d'un programme (Admin)"""
+    
+    assignment = db.query(ProgramExpert).filter(
+        ProgramExpert.program_id == program_id,
+        ProgramExpert.expert_id == expert_id
+    ).first()
+    
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Assignation non trouvée"
+        )
+    
+    db.delete(assignment)
+    db.commit()
+    
+    return {"message": "Expert retiré du programme avec succès"}
+
+@router.put("/{program_id}/experts/{expert_id}")
+def update_expert_role(
+    program_id: UUID,
+    expert_id: UUID,
+    role_data: dict,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """✏️ Modifier le rôle d'un expert dans un programme (Admin)"""
+    
+    new_role = role_data.get("role")
+    if not new_role:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Nouveau rôle requis"
+        )
+    
+    assignment = db.query(ProgramExpert).filter(
+        ProgramExpert.program_id == program_id,
+        ProgramExpert.expert_id == expert_id
+    ).first()
+    
+    if not assignment:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Assignation non trouvée"
+        )
+    
+    assignment.role = new_role
+    db.commit()
+    db.refresh(assignment)
+    
+    return {
+        "message": "Rôle mis à jour avec succès",
+        "assignment": {
+            "program_expert_id": str(assignment.program_expert_id),
+            "role": assignment.role
+        }
+    }
+
+# ========== GESTION DES PARTICIPANTS ==========
+
+@router.put("/{program_id}/participants/{entrepreneur_id}/status")
+def update_participant_status(
+    program_id: UUID,
+    entrepreneur_id: UUID,
+    status_data: dict,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """✏️ Modifier le statut d'un participant (Admin)"""
+    
+    new_status = status_data.get("completion_status")
+    if not new_status:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Nouveau statut requis"
+        )
+    
+    # Vérifier que le statut est valide
+    valid_statuses = ["in_progress", "completed", "dropped"]
+    if new_status not in valid_statuses:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Statut invalide. Statuts valides: {', '.join(valid_statuses)}"
+        )
+    
+    # Trouver la participation
+    participation = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.entrepreneur_id == entrepreneur_id
+    ).first()
+    
+    if not participation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Participation non trouvée"
+        )
+    
+    # Mettre à jour le statut
+    participation.completion_status = new_status
+    
+    # Si terminé, mettre la date de completion
+    if new_status == "completed":
+        participation.completion_date = datetime.utcnow()
+    elif new_status == "in_progress":
+        # Remettre en cours annule la date de completion
+        participation.completion_date = None
+    
+    db.commit()
+    db.refresh(participation)
+    
+    return {
+        "message": "Statut mis à jour avec succès",
+        "participation": {
+            "participant_id": str(participation.participant_id),
+            "completion_status": participation.completion_status,
+            "completion_date": participation.completion_date.isoformat() if participation.completion_date else None
+        }
+    }
+
+@router.delete("/{program_id}/participants/{entrepreneur_id}")
+def remove_participant_from_program(
+    program_id: UUID,
+    entrepreneur_id: UUID,
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """🗑️ Retirer un participant d'un programme (Admin)"""
+    
+    participation = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.entrepreneur_id == entrepreneur_id
+    ).first()
+    
+    if not participation:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Participation non trouvée"
+        )
+    
+    db.delete(participation)
+    db.commit()
+    
+    return {"message": "Participant retiré du programme avec succès"}
