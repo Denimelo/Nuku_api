@@ -59,6 +59,10 @@ def get_all_experts(db: Session, active_only: bool = True) -> List[Expert]:
         query = query.filter(Expert.is_active == True)
     return query.all()
 
+def get_expert(db: Session, expert_id: UUID) -> Optional[Expert]:
+    """Récupérer un expert par son ID"""
+    return db.query(Expert).filter(Expert.expert_id == expert_id).first()
+
 def update_expert_profile(
     db: Session, 
     expert_id: UUID, 
