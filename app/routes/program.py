@@ -20,8 +20,8 @@ from app.crud.program import (
     leave_program, get_participation_by_ids, update_participation_status
 )
 from app.crud.entrepreneur import get_entrepreneur_by_user_id
-from app.models.program_participant import ProgramParticipant
-from app.models.program_expert import ProgramExpert
+from app.models.programParticipant import ProgramParticipant
+from app.models.programExpert import ProgramExpert
 from app.models.expert import Expert
 from app.crud.expert import get_expert
 
