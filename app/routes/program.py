@@ -7,7 +7,8 @@ from datetime import datetime
 from app.database import get_db
 from app.auth.dependencies import get_current_user, require_admin, require_entrepreneur
 from app.models.user import User
-from app.models.entrepreneur import ValidationStatus
+from app.models.program import Program
+from app.models.entrepreneur import Entrepreneur, ValidationStatus
 from app.schemas.program import (
     ProgramResponse, ProgramCreate, ProgramUpdate, ProgramWithParticipation,
     ProgramParticipantResponse, ProgramStats, EntrepreneurProgramSummary,
@@ -602,3 +603,41 @@ def remove_participant_from_program(
     db.commit()
     
     return {"message": "Participant retiré du programme avec succès"}
+
+@router.get("/admin/enrollments")
+def get_all_enrollments(
+    current_user: User = Depends(require_admin),
+    db: Session = Depends(get_db)
+):
+    """📋 Récupérer toutes les inscriptions (Admin)"""
+    
+    enrollments = db.query(ProgramParticipant).join(
+        Program, ProgramParticipant.program_id == Program.program_id
+    ).join(
+        Entrepreneur, ProgramParticipant.entrepreneur_id == Entrepreneur.entrepreneur_id
+    ).join(
+        User, Entrepreneur.user_id == User.user_id
+    ).all()
+    
+    result = []
+    for participation in enrollments:
+        result.append({
+            "participant_id": str(participation.participant_id),
+            "program_id": str(participation.program_id),
+            "program_name": participation.program.name,
+            "enrollment_date": participation.enrollment_date.isoformat(),
+            "completion_status": participation.completion_status,
+            "completion_date": participation.completion_date.isoformat() if participation.completion_date else None,
+            "entrepreneur": {
+                "entrepreneur_id": str(participation.entrepreneur.entrepreneur_id),
+                "company_name": participation.entrepreneur.company_name,
+                "industry_sector": participation.entrepreneur.industry_sector,
+                "user": {
+                    "first_name": participation.entrepreneur.user.first_name,
+                    "last_name": participation.entrepreneur.user.last_name,
+                    "email": participation.entrepreneur.user.email
+                }
+            }
+        })
+    
+    return result
