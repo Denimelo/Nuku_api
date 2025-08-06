@@ -344,6 +344,32 @@ async def create_module_content_route(
        }
        
        content_type_mime = get_content_type(file.filename)
+
+           # Ajouter la gestion pour les images
+       if content_type == "image":
+            if not file:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Un fichier image est requis pour ce type de contenu"
+                )
+            
+            # Vérifier que c'est bien une image
+            if not file.content_type.startswith('image/'):
+                raise HTTPException(
+                    status_code=400,
+                    detail="Le fichier doit être une image valide"
+                )
+            
+            # Limite de taille pour les images (10MB)
+            max_size = 10 * 1024 * 1024
+            if len(await file.read()) > max_size:
+                raise HTTPException(
+                    status_code=400,
+                    detail="L'image est trop volumineuse (max 10MB)"
+                )
+            
+            # Reset le curseur du fichier
+            await file.seek(0)
        
        if content_type in allowed_types and content_type_mime not in allowed_types[content_type]:
            raise HTTPException(

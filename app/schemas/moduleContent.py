@@ -4,10 +4,14 @@ from enum import Enum
 from datetime import datetime
 
 class ContentType(str, Enum):
-    video = "video"
-    text = "text"
-    pdf = "pdf"
-    quiz = "quiz"
+    TEXT = "text"
+    VIDEO = "video"
+    AUDIO = "audio"
+    DOCUMENT = "document"
+    IMAGE = "image" 
+    INTERACTIVE = "interactive"
+    QUIZ = "quiz"
+    LINK = "link"
 
 class ModuleContentBase(BaseModel):
     module_id: UUID4

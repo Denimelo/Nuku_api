@@ -10,7 +10,8 @@ class ContentType(str, enum.Enum):
     text = "text"               # Contenu textuel
     video = "video"             # Vidéo
     audio = "audio"             # Audio/Podcast
-    document = "document"       # Document PDF
+    document = "document"       # Document (PDF, DOCX, etc.)
+    image = "image"             # Image
     interactive = "interactive" # Contenu interactif
     quiz = "quiz"              # Quiz
     link = "link"              # Lien externe
