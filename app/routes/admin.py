@@ -29,6 +29,9 @@ from app.utils.email import send_expert_welcome_email, send_entrepreneur_validat
 from app.utils.security import generate_temporary_password
 from typing import List, Optional, Dict, Any
 from datetime import datetime, timedelta
+from reportlab.pdfgen import canvas
+from reportlab.lib.pagesizes import A4
+from reportlab.lib import colors
 
 # Router pour les opérations administratives
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -413,22 +416,25 @@ def export_report(
         return export_to_pdf(data, filename, report_type)
 
 def export_to_excel(data: dict, filename: str):
-    """Exporter en Excel"""
+    """Exporter en Excel avec design amélioré"""
     output = io.BytesIO()
-    
     with pd.ExcelWriter(output, engine='openpyxl') as writer:
-        # Feuille principale avec métriques
-        if "users" in data:
-            df_users = pd.DataFrame(data["users"])
-            df_users.to_excel(writer, sheet_name='Utilisateurs', index=False)
-        
         # Feuille résumé
         summary_data = {k: v for k, v in data.items() if not isinstance(v, (list, dict)) or k == "period"}
         df_summary = pd.DataFrame([summary_data])
         df_summary.to_excel(writer, sheet_name='Résumé', index=False)
-    
+
+        # Feuille utilisateurs si présente
+        if "users" in data and isinstance(data["users"], list) and data["users"]:
+            df_users = pd.DataFrame(data["users"])
+            df_users.to_excel(writer, sheet_name='Utilisateurs', index=False)
+
+        # Feuille modules si présente
+        if "modules" in data and isinstance(data["modules"], list) and data["modules"]:
+            df_modules = pd.DataFrame(data["modules"])
+            df_modules.to_excel(writer, sheet_name='Modules', index=False)
+
     output.seek(0)
-    
     return StreamingResponse(
         io.BytesIO(output.read()),
         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -436,24 +442,86 @@ def export_to_excel(data: dict, filename: str):
     )
 
 def export_to_pdf(data: dict, filename: str, report_type: str):
-    """Exporter en PDF (implémentation simplifiée)"""
-    # Pour une vraie implémentation PDF, utilisez reportlab ou weasyprint
-    # Ici, on retourne du JSON formaté comme exemple
-    
-    output = io.StringIO()
-    output.write(f"RAPPORT {report_type.upper()}\n")
-    output.write("=" * 50 + "\n\n")
-    output.write(f"Généré le: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n")
-    
+    """Exporter en PDF avec design amélioré (reportlab)"""
+    output = io.BytesIO()
+    c = canvas.Canvas(output, pagesize=A4)
+    width, height = A4
+    margin = 40
+    y = height - margin
+
+    # Titre
+    c.setFont("Helvetica-Bold", 18)
+    c.drawString(margin, y, f"Rapport {report_type.replace('_', ' ').title()}")
+    y -= 30
+
+    # Date de génération
+    c.setFont("Helvetica", 12)
+    c.drawString(margin, y, f"Généré le : {datetime.now().strftime('%d/%m/%Y %H:%M')}")
+    y -= 25
+
+    # Période
+    if "period" in data:
+        c.drawString(margin, y, f"Période : {data['period'].get('start_date', '')} à {data['period'].get('end_date', '')}")
+        y -= 20
+
+    # Résumé des métriques
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(margin, y, "Résumé")
+    y -= 20
+    c.setFont("Helvetica", 12)
     for key, value in data.items():
-        if isinstance(value, (list, dict)):
+        if isinstance(value, (list, dict)) or key == "period":
             continue
-        output.write(f"{key}: {value}\n")
-    
-    content = output.getvalue().encode()
-    
+        c.drawString(margin, y, f"{key.replace('_', ' ').capitalize()} : {value}")
+        y -= 18
+
+    # Tableau utilisateurs si présent
+    if "users" in data and isinstance(data["users"], list) and data["users"]:
+        y -= 10
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(margin, y, "Utilisateurs actifs")
+        y -= 20
+        c.setFont("Helvetica-Bold", 10)
+        headers = ["Nom", "Type", "Dernière connexion", "Statut"]
+        for i, h in enumerate(headers):
+            c.drawString(margin + i*120, y, h)
+        y -= 15
+        c.setFont("Helvetica", 10)
+        for user in data["users"]:
+            c.drawString(margin, y, user.get("name", ""))
+            c.drawString(margin + 120, y, user.get("user_type", ""))
+            c.drawString(margin + 240, y, str(user.get("last_login", "")))
+            c.drawString(margin + 360, y, user.get("status", ""))
+            y -= 13
+            if y < margin + 50:
+                c.showPage()
+                y = height - margin
+
+    # Tableau modules si présent
+    if "modules" in data and isinstance(data["modules"], list) and data["modules"]:
+        y -= 10
+        c.setFont("Helvetica-Bold", 14)
+        c.drawString(margin, y, "Modules")
+        y -= 20
+        c.setFont("Helvetica-Bold", 10)
+        headers = ["Titre", "Complétés", "Taux (%)"]
+        for i, h in enumerate(headers):
+            c.drawString(margin + i*180, y, h)
+        y -= 15
+        c.setFont("Helvetica", 10)
+        for module in data["modules"]:
+            c.drawString(margin, y, module.get("title", ""))
+            c.drawString(margin + 180, y, str(module.get("completion_count", "")))
+            c.drawString(margin + 360, y, str(module.get("completion_rate", "")))
+            y -= 13
+            if y < margin + 50:
+                c.showPage()
+                y = height - margin
+
+    c.save()
+    output.seek(0)
     return StreamingResponse(
-        io.BytesIO(content),
+        output,
         media_type="application/pdf",
         headers={"Content-Disposition": f"attachment; filename={filename}.pdf"}
     )
@@ -976,4 +1044,4 @@ def get_system_info():
         "storage": "Supabase Storage", 
         "deployment": "Render",
         "uptime": "5 jours, 3 heures"
-    }   
+    }
