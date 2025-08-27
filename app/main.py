@@ -140,6 +140,12 @@ def health_check():
         "timestamp": time.time()
     }
 
+@app.head("/health")
+def health_check_head():
+    """Health check for HEAD requests (UptimeRobot, etc.)"""
+    return JSONResponse(status_code=200, content=None)
+
+
 # 📦 Inclusion des routes avec préfixes organisés
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(otp.router, prefix="/api/v1")
