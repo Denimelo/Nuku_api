@@ -11,7 +11,6 @@ from app.models.call import Call
 from app.models.callParticipant import CallParticipant
 from app.models.programExpert import ProgramExpert
 from app.models.message import Message
-from app.models.document import Document
 
 
 
@@ -28,6 +27,5 @@ __all__ = [
     "Call",
     "CallParticipant",
     "ProgramExpert",
-    "Message",
-    "Document"
+    "Message"
 ]

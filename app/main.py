@@ -17,7 +17,6 @@ from app.routes import (
   auth, 
   call,
   callParticipant,
-  document, 
   entrepreneur, 
   expert,
   message, 
@@ -159,7 +158,6 @@ app.include_router(call.router, prefix="/api/v1")
 app.include_router(callParticipant.router, prefix="/api/v1")
 app.include_router(message.router, prefix="/api/v1")
 app.include_router(notification.router, prefix="/api/v1")
-app.include_router(document.router, prefix="/api/v1")
 
 # 📋 Route d'information sur l'API
 @app.get("/api/v1/info")

@@ -5,20 +5,14 @@ from datetime import datetime
 from uuid import uuid4
 from app.database import Base
 import enum
-
-
 class UserType(str, enum.Enum):
     entrepreneur = "entrepreneur"
     expert = "expert"
     admin = "admin"
-
-
 class UserStatus(str, enum.Enum):
     pending = "pending"
     active = "active"
     suspended = "suspended"
-
-
 class User(Base):
     __tablename__ = "users"
 
@@ -48,7 +42,6 @@ class User(Base):
     assigned_expert_roles = relationship("ProgramExpert", back_populates="assigned_by_user")
     sent_messages = relationship("Message", back_populates="sender", foreign_keys='Message.sender_id')
     received_messages = relationship("Message", back_populates="receiver", foreign_keys='Message.receiver_id')
-    uploaded_documents = relationship("Document", back_populates="uploaded_by_user")
     message_reactions = relationship("MessageReaction", back_populates="user")
     notifications = relationship("Notification", back_populates="user", cascade="all, delete-orphan")
     notification_preferences = relationship("UserNotificationPreferences", back_populates="user", uselist=False, cascade="all, delete-orphan")  

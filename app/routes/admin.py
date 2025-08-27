@@ -1,10 +1,16 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import StreamingResponse
+from sqlalchemy import func, and_, or_, desc, asc
 from sqlalchemy.orm import Session
+import pandas as pd
 from uuid import UUID
+import io
+import json
 from app.database import get_db
 from app.models.user import User, UserStatus
 from app.models.expert import Expert
 from app.models.entrepreneur import Entrepreneur
+from app.models.expertMentoring import ExpertMentoring, MentoringStatus
 from app.schemas.user import UserResponse
 from app.schemas.entrepreneur import EntrepreneurResponse
 from app.schemas.expert import ExpertCreate, ExpertResponse
@@ -14,8 +20,8 @@ from app.crud.entrepreneur import get_entrepreneur_by_id
 from app.auth.dependencies import get_current_user, require_admin
 from app.utils.email import send_expert_welcome_email, send_entrepreneur_validation_email, send_entrepreneur_rejection_email
 from app.utils.security import generate_temporary_password
-from typing import List
-from datetime import datetime
+from typing import List, Optional, Dict, Any
+from datetime import datetime, timedelta
 
 # Router pour les opérations administratives
 router = APIRouter(prefix="/admin", tags=["Admin"])
@@ -172,3 +178,543 @@ def update_user(user_id: UUID, user_data: dict, db: Session = Depends(get_db)):
     db.commit()
     
     return user
+
+# ========== ROUTES RAPPORTS ==========
+
+@router.get("/reports/platform-metrics", dependencies=[Depends(require_admin)])
+def get_platform_metrics(
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """📊 Métriques générales de la plateforme"""
+    
+    # Définir les dates par défaut (30 derniers jours)
+    if not end_date:
+        end_date = datetime.now().date()
+    else:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
+    if not start_date:
+        start_date = end_date - timedelta(days=30)
+    else:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+
+    # Métriques utilisateurs
+    total_users = db.query(User).count()
+    active_users_7d = db.query(User).filter(
+        User.last_login >= datetime.now() - timedelta(days=7)
+    ).count()
+    new_users_7d = db.query(User).filter(
+        User.created_at >= datetime.now() - timedelta(days=7)
+    ).count()
+
+    # Métriques programmes
+    total_programs = db.query(Program).count()
+    active_programs = db.query(Program).filter(Program.is_active == True).count()
+
+    # Métriques appels
+    upcoming_calls = db.query(Call).filter(
+        Call.scheduled_start >= datetime.now(),
+        Call.status == 'scheduled'
+    ).count()
+
+    # Métriques messages (7 derniers jours)
+    messages_sent_7d = db.query(Message).filter(
+        Message.sent_at >= datetime.now() - timedelta(days=7)
+    ).count()
+
+    return {
+        "total_users": total_users,
+        "active_users_7d": active_users_7d,
+        "new_users_7d": new_users_7d,
+        "total_programs": total_programs,
+        "active_programs": active_programs,
+        "upcoming_calls": upcoming_calls,
+        "messages_sent_7d": messages_sent_7d,
+        "period": {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat()
+        }
+    }
+
+@router.get("/reports/user-activity", dependencies=[Depends(require_admin)])
+def get_user_activity_report(
+    user_id: Optional[str] = Query(None),
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """👥 Rapport d'activité des utilisateurs"""
+    
+    if not end_date:
+        end_date = datetime.now().date()
+    else:
+        end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+    
+    if not start_date:
+        start_date = end_date - timedelta(days=30)
+    else:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+
+    # Si user_id spécifique
+    if user_id:
+        user = get_user_by_id(db, user_id)
+        if not user:
+            raise HTTPException(status_code=404, detail="Utilisateur non trouvé")
+        
+        # Statistiques détaillées pour cet utilisateur
+        login_count_7d = db.query(User).filter(
+            User.user_id == user_id,
+            User.last_login >= datetime.now() - timedelta(days=7)
+        ).count()
+        
+        # Modules complétés (si entrepreneur)
+        completed_modules = 0
+        if user.user_type.value == "entrepreneur":
+            completed_modules = db.query(ModuleProgress).join(Entrepreneur).filter(
+                Entrepreneur.user_id == user_id,
+                ModuleProgress.is_completed == True
+            ).count()
+
+        return {
+            "user_id": user_id,
+            "user_name": f"{user.first_name} {user.last_name}",
+            "last_login": user.last_login,
+            "login_count_7d": login_count_7d,
+            "completed_modules": completed_modules,
+            "period": {
+                "start_date": start_date.isoformat(),
+                "end_date": end_date.isoformat()
+            }
+        }
+    
+    # Rapport global d'activité
+    active_users = db.query(User).filter(
+        User.last_login >= start_date
+    ).all()
+    
+    activity_data = []
+    for user in active_users:
+        activity_data.append({
+            "user_id": str(user.user_id),
+            "name": f"{user.first_name} {user.last_name}",
+            "user_type": user.user_type.value,
+            "last_login": user.last_login,
+            "status": user.status.value
+        })
+    
+    return {
+        "total_active_users": len(activity_data),
+        "users": activity_data,
+        "period": {
+            "start_date": start_date.isoformat(),
+            "end_date": end_date.isoformat()
+        }
+    }
+
+@router.get("/reports/programs/{program_id}/stats", dependencies=[Depends(require_admin)])
+def get_program_stats_report(
+    program_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """📚 Statistiques détaillées d'un programme"""
+    
+    program = get_program_by_id(db, program_id)
+    if not program:
+        raise HTTPException(status_code=404, detail="Programme non trouvé")
+    
+    # Participants
+    total_participants = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id
+    ).count()
+    
+    active_participants = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.completion_status == 'in_progress'
+    ).count()
+    
+    completed_participants = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.completion_status == 'completed'
+    ).count()
+    
+    dropped_participants = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.completion_status == 'dropped'
+    ).count()
+
+    # Taux de completion
+    completion_rate = (completed_participants / total_participants * 100) if total_participants > 0 else 0
+
+    # Modules du programme
+    modules = db.query(Module).filter(Module.program_id == program_id).all()
+    module_stats = []
+    
+    for module in modules:
+        module_completion = db.query(ModuleProgress).filter(
+            ModuleProgress.module_id == module.module_id,
+            ModuleProgress.is_completed == True
+        ).count()
+        
+        module_stats.append({
+            "module_id": str(module.module_id),
+            "title": module.title,
+            "completion_count": module_completion,
+            "completion_rate": (module_completion / total_participants * 100) if total_participants > 0 else 0
+        })
+
+    return {
+        "program_id": str(program_id),
+        "program_name": program.name,
+        "total_participants": total_participants,
+        "active_participants": active_participants,
+        "completed_participants": completed_participants,
+        "dropped_participants": dropped_participants,
+        "completion_rate": completion_rate,
+        "modules": module_stats
+    }
+
+@router.post("/reports/export", dependencies=[Depends(require_admin)])
+def export_report(
+    report_type: str,
+    format: str = "excel",  # "excel" ou "pdf"
+    start_date: Optional[str] = Query(None),
+    end_date: Optional[str] = Query(None),
+    db: Session = Depends(get_db)
+):
+    """📥 Exporter rapport en Excel ou PDF"""
+    
+    if format not in ["excel", "pdf"]:
+        raise HTTPException(status_code=400, detail="Format non supporté. Utilisez 'excel' ou 'pdf'")
+    
+    # Générer les données selon le type de rapport
+    if report_type == "platform_overview":
+        data = get_platform_metrics(start_date, end_date, db)
+        filename = f"rapport_plateforme_{datetime.now().strftime('%Y%m%d')}"
+        
+    elif report_type == "user_activity":
+        data = get_user_activity_report(None, start_date, end_date, db)
+        filename = f"rapport_utilisateurs_{datetime.now().strftime('%Y%m%d')}"
+        
+    else:
+        raise HTTPException(status_code=400, detail="Type de rapport non supporté")
+
+    if format == "excel":
+        return export_to_excel(data, filename)
+    else:
+        return export_to_pdf(data, filename, report_type)
+
+def export_to_excel(data: dict, filename: str):
+    """Exporter en Excel"""
+    output = io.BytesIO()
+    
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        # Feuille principale avec métriques
+        if "users" in data:
+            df_users = pd.DataFrame(data["users"])
+            df_users.to_excel(writer, sheet_name='Utilisateurs', index=False)
+        
+        # Feuille résumé
+        summary_data = {k: v for k, v in data.items() if not isinstance(v, (list, dict)) or k == "period"}
+        df_summary = pd.DataFrame([summary_data])
+        df_summary.to_excel(writer, sheet_name='Résumé', index=False)
+    
+    output.seek(0)
+    
+    return StreamingResponse(
+        io.BytesIO(output.read()),
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={"Content-Disposition": f"attachment; filename={filename}.xlsx"}
+    )
+
+def export_to_pdf(data: dict, filename: str, report_type: str):
+    """Exporter en PDF (implémentation simplifiée)"""
+    # Pour une vraie implémentation PDF, utilisez reportlab ou weasyprint
+    # Ici, on retourne du JSON formaté comme exemple
+    
+    output = io.StringIO()
+    output.write(f"RAPPORT {report_type.upper()}\n")
+    output.write("=" * 50 + "\n\n")
+    output.write(f"Généré le: {datetime.now().strftime('%d/%m/%Y %H:%M')}\n\n")
+    
+    for key, value in data.items():
+        if isinstance(value, (list, dict)):
+            continue
+        output.write(f"{key}: {value}\n")
+    
+    content = output.getvalue().encode()
+    
+    return StreamingResponse(
+        io.BytesIO(content),
+        media_type="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}.pdf"}
+    )
+
+# ========== SYSTÈME DE MENTORAT ==========
+
+@router.post("/mentoring/assign", dependencies=[Depends(require_admin)])
+def assign_mentor_to_entrepreneur(
+    expert_id: UUID,
+    entrepreneur_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """👨‍🏫 Assigner un mentor (expert) à un entrepreneur"""
+    
+    # Vérifier que l'expert existe
+    expert = get_expert_by_id(db, expert_id)
+    if not expert:
+        raise HTTPException(status_code=404, detail="Expert non trouvé")
+    
+    # Vérifier que l'entrepreneur existe
+    entrepreneur = get_entrepreneur_by_id(db, entrepreneur_id)
+    if not entrepreneur:
+        raise HTTPException(status_code=404, detail="Entrepreneur non trouvé")
+    
+    # Vérifier que l'entrepreneur n'a pas déjà terminé sa formation
+    entrepreneur_progress = check_entrepreneur_completion_status(db, entrepreneur_id)
+    if entrepreneur_progress["is_completed"]:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cet entrepreneur a déjà terminé sa formation"
+        )
+    
+    # Vérifier le nombre d'entrepreneurs actifs de l'expert
+    active_mentees = get_expert_active_mentees_count(db, expert_id)
+    if active_mentees >= 3:
+        raise HTTPException(
+            status_code=400, 
+            detail="Cet expert a déjà 3 mentorés actifs (maximum autorisé)"
+        )
+    
+    # Vérifier si l'entrepreneur a déjà un mentor actif
+    existing_mentoring = db.query(ExpertMentoring).filter(
+        ExpertMentoring.entrepreneur_id == entrepreneur_id,
+        ExpertMentoring.status == 'active'
+    ).first()
+    
+    if existing_mentoring:
+        raise HTTPException(
+            status_code=400,
+            detail="Cet entrepreneur a déjà un mentor assigné"
+        )
+    
+    # Créer la relation de mentorat
+    mentoring = ExpertMentoring(
+        expert_id=expert_id,
+        entrepreneur_id=entrepreneur_id,
+        assigned_date=datetime.utcnow(),
+        status='active'
+    )
+    
+    db.add(mentoring)
+    db.commit()
+    
+    return {
+        "message": "Mentor assigné avec succès",
+        "expert_name": f"{expert.user.first_name} {expert.user.last_name}",
+        "entrepreneur_name": f"{entrepreneur.user.first_name} {entrepreneur.user.last_name}",
+        "assigned_date": mentoring.assigned_date
+    }
+
+@router.get("/mentoring/expert/{expert_id}/mentees", dependencies=[Depends(require_admin)])
+def get_expert_mentees(expert_id: UUID, db: Session = Depends(get_db)):
+    """👥 Liste des mentorés d'un expert"""
+    
+    expert = get_expert_by_id(db, expert_id)
+    if not expert:
+        raise HTTPException(status_code=404, detail="Expert non trouvé")
+    
+    # Récupérer tous les mentorés (actifs et anciens)
+    mentorings = db.query(ExpertMentoring).filter(
+        ExpertMentoring.expert_id == expert_id
+    ).order_by(desc(ExpertMentoring.assigned_date)).all()
+    
+    mentees_data = []
+    active_count = 0
+    
+    for mentoring in mentorings:
+        entrepreneur = mentoring.entrepreneur
+        progress = check_entrepreneur_completion_status(db, entrepreneur.entrepreneur_id)
+        
+        if mentoring.status == 'active':
+            active_count += 1
+        
+        mentees_data.append({
+            "mentoring_id": str(mentoring.mentoring_id),
+            "entrepreneur_id": str(entrepreneur.entrepreneur_id),
+            "entrepreneur_name": f"{entrepreneur.user.first_name} {entrepreneur.user.last_name}",
+            "company_name": entrepreneur.company_name,
+            "assigned_date": mentoring.assigned_date,
+            "status": mentoring.status,
+            "completion_percentage": progress["completion_percentage"],
+            "is_completed": progress["is_completed"],
+            "completed_modules": progress["completed_modules"],
+            "total_modules": progress["total_modules"]
+        })
+    
+    return {
+        "expert_name": f"{expert.user.first_name} {expert.user.last_name}",
+        "active_mentees_count": active_count,
+        "max_mentees": 3,
+        "available_slots": max(0, 3 - active_count),
+        "mentees": mentees_data
+    }
+
+@router.put("/mentoring/{mentoring_id}/complete", dependencies=[Depends(require_admin)])
+def complete_mentoring_relationship(
+    mentoring_id: UUID,
+    db: Session = Depends(get_db)
+):
+    """✅ Marquer une relation de mentorat comme terminée"""
+    
+    mentoring = db.query(ExpertMentoring).filter(
+        ExpertMentoring.mentoring_id == mentoring_id
+    ).first()
+    
+    if not mentoring:
+        raise HTTPException(status_code=404, detail="Relation de mentorat non trouvée")
+    
+    # Vérifier si l'entrepreneur a terminé sa formation
+    progress = check_entrepreneur_completion_status(db, mentoring.entrepreneur_id)
+    
+    if progress["is_completed"]:
+        mentoring.status = 'completed'
+        mentoring.completed_date = datetime.utcnow()
+        mentoring.completion_reason = 'formation_completed'
+    else:
+        mentoring.status = 'inactive'
+        mentoring.completed_date = datetime.utcnow()
+        mentoring.completion_reason = 'manual_completion'
+    
+    db.commit()
+    
+    return {
+        "message": "Relation de mentorat marquée comme terminée",
+        "completion_reason": mentoring.completion_reason,
+        "entrepreneur_formation_completed": progress["is_completed"]
+    }
+
+@router.get("/mentoring/stats", dependencies=[Depends(require_admin)])
+def get_mentoring_stats(db: Session = Depends(get_db)):
+    """📊 Statistiques du système de mentorat"""
+    
+    # Statistiques générales
+    total_experts = db.query(Expert).filter(Expert.is_active == True).count()
+    experts_with_mentees = db.query(ExpertMentoring.expert_id).filter(
+        ExpertMentoring.status == 'active'
+    ).distinct().count()
+    
+    total_active_mentorings = db.query(ExpertMentoring).filter(
+        ExpertMentoring.status == 'active'
+    ).count()
+    
+    total_completed_mentorings = db.query(ExpertMentoring).filter(
+        ExpertMentoring.status == 'completed'
+    ).count()
+    
+    # Répartition des experts par nombre de mentorés
+    expert_workload = db.query(
+        ExpertMentoring.expert_id,
+        func.count(ExpertMentoring.entrepreneur_id).label('mentee_count')
+    ).filter(
+        ExpertMentoring.status == 'active'
+    ).group_by(ExpertMentoring.expert_id).all()
+    
+    workload_distribution = {0: 0, 1: 0, 2: 0, 3: 0}
+    for expert_id, count in expert_workload:
+        workload_distribution[count] = workload_distribution.get(count, 0) + 1
+    
+    # Compter les experts sans mentorés
+    workload_distribution[0] = total_experts - sum(workload_distribution.values())
+    
+    return {
+        "total_experts": total_experts,
+        "experts_with_mentees": experts_with_mentees,
+        "experts_available": total_experts - experts_with_mentees,
+        "total_active_mentorings": total_active_mentorings,
+        "total_completed_mentorings": total_completed_mentorings,
+        "average_mentees_per_expert": round(total_active_mentorings / max(1, experts_with_mentees), 2),
+        "workload_distribution": {
+            "0_mentees": workload_distribution[0],
+            "1_mentee": workload_distribution[1],
+            "2_mentees": workload_distribution[2],
+            "3_mentees": workload_distribution[3]
+        },
+        "utilization_rate": round((experts_with_mentees / max(1, total_experts)) * 100, 2)
+    }
+
+# ========== FONCTIONS UTILITAIRES ==========
+
+def get_expert_active_mentees_count(db: Session, expert_id: UUID) -> int:
+    """Compter le nombre de mentorés actifs d'un expert"""
+    return db.query(ExpertMentoring).filter(
+        ExpertMentoring.expert_id == expert_id,
+        ExpertMentoring.status == 'active'
+    ).count()
+
+def check_entrepreneur_completion_status(db: Session, entrepreneur_id: UUID) -> Dict[str, Any]:
+    """Vérifier le statut de completion d'un entrepreneur"""
+    
+    # Récupérer tous les programmes auxquels l'entrepreneur participe
+    participations = db.query(ProgramParticipant).filter(
+        ProgramParticipant.entrepreneur_id == entrepreneur_id
+    ).all()
+    
+    if not participations:
+        return {
+            "is_completed": False,
+            "completion_percentage": 0,
+            "completed_modules": 0,
+            "total_modules": 0
+        }
+    
+    total_modules = 0
+    completed_modules = 0
+    
+    for participation in participations:
+        # Modules du programme
+        program_modules = db.query(Module).filter(
+            Module.program_id == participation.program_id
+        ).all()
+        
+        for module in program_modules:
+            total_modules += 1
+            
+            # Vérifier si le module est complété
+            progress = db.query(ModuleProgress).filter(
+                ModuleProgress.module_id == module.module_id,
+                ModuleProgress.user_id == participation.entrepreneur.user_id,
+                ModuleProgress.is_completed == True
+            ).first()
+            
+            if progress:
+                completed_modules += 1
+    
+    completion_percentage = (completed_modules / max(1, total_modules)) * 100
+    is_completed = completion_percentage >= 100
+    
+    # Si l'entrepreneur a terminé sa formation, mettre à jour automatiquement les relations de mentorat
+    if is_completed:
+        update_mentoring_on_completion(db, entrepreneur_id)
+    
+    return {
+        "is_completed": is_completed,
+        "completion_percentage": round(completion_percentage, 2),
+        "completed_modules": completed_modules,
+        "total_modules": total_modules
+    }
+
+def update_mentoring_on_completion(db: Session, entrepreneur_id: UUID):
+    """Mettre à jour automatiquement le mentorat quand un entrepreneur termine"""
+    
+    active_mentoring = db.query(ExpertMentoring).filter(
+        ExpertMentoring.entrepreneur_id == entrepreneur_id,
+        ExpertMentoring.status == 'active'
+    ).first()
+    
+    if active_mentoring:
+        active_mentoring.status = 'completed'
+        active_mentoring.completed_date = datetime.utcnow()
+        active_mentoring.completion_reason = 'formation_completed'
+        db.commit()

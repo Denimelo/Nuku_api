@@ -28,3 +28,4 @@ class Expert(Base):
     graded_submissions = relationship("AssignmentSubmission", back_populates="graded_by_expert")
     calls_hosted = relationship("Call", back_populates="expert")
     program_assignments = relationship("ProgramExpert", back_populates="expert")
+    mentorings = relationship("ExpertMentoring", back_populates="expert")

@@ -60,3 +60,4 @@ class Entrepreneur(Base):
     program_participations = relationship("ProgramParticipant", back_populates="entrepreneur")
     assignment_submissions = relationship("AssignmentSubmission", back_populates="entrepreneur")
     call_participations = relationship("CallParticipant", back_populates="entrepreneur")
+    mentorings = relationship("ExpertMentoring", back_populates="entrepreneur")

@@ -25,5 +25,4 @@ class Program(Base):
     modules = relationship("Module", back_populates="program")
     calls = relationship("Call", back_populates="program")
     messages = relationship("Message", back_populates="program")
-    documents = relationship("Document", back_populates="program")
 
