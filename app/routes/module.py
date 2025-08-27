@@ -1,13 +1,20 @@
+from datetime import datetime
 from fastapi import APIRouter, Depends, HTTPException, status, Query, UploadFile, File, Form
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from uuid import UUID
 
+from app.models.program import Program
+from app.models.moduleContent import ModuleContent
+from app.models.entrepreneur import Entrepreneur
 from app.database import get_db
+from app.models.module import Module
 from app.auth.dependencies import get_current_user, require_expert, require_admin
+from app.models.moduleProgress import ModuleProgress
 from app.models.user import User
+from app.models.programParticipant import EnrollmentStatus, ProgramParticipant
 from app.schemas.module import (
-    ModuleCreate, ModuleUpdate, ModuleResponse, ModuleWithProgress,
+    ModuleCreate, ModuleStatus, ModuleUpdate, ModuleResponse, ModuleWithProgress,
     ModuleSummary, ModuleStats, ModuleCatalog, ModuleContentCreate,
     ModuleContentUpdate, ModuleContentResponse, ModuleProgressResponse
 )
@@ -751,3 +758,287 @@ def get_my_expert_modules(
        ModuleResponse(**format_module_response(module, current_user.user_id))
        for module in modules
    ]
+
+# À ajouter dans app/routes/module.py
+
+@router.get("/modules/{module_id}/access-check", dependencies=[Depends(get_current_user)])
+def check_module_access(
+    module_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Vérifier l'accès à un module spécifique"""
+    
+    module = db.query(Module).filter(Module.module_id == module_id).first()
+    if not module:
+        raise HTTPException(status_code=404, detail="Module non trouvé")
+    
+    # Admins et experts ont accès à tout
+    if current_user.user_type in ["admin", "expert"]:
+        return {
+            "has_access": True,
+            "access_type": "full",
+            "reason": f"Accès {current_user.user_type}"
+        }
+    
+    # Pour les entrepreneurs
+    if current_user.user_type == "entrepreneur":
+        entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+        if not entrepreneur:
+            raise HTTPException(status_code=404, detail="Profil entrepreneur non trouvé")
+        
+        # Vérifier si les 2 premiers modules (gratuits)
+        if module.order_index <= 1:
+            return {
+                "has_access": True,
+                "access_type": "free",
+                "reason": "Module gratuit (aperçu)"
+            }
+        
+        # Vérifier l'inscription approuvée au programme
+        enrollment = db.query(ProgramParticipant).filter(
+            ProgramParticipant.program_id == module.program_id,
+            ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id,
+            ProgramParticipant.enrollment_status == EnrollmentStatus.approved
+        ).first()
+        
+        if enrollment:
+            return {
+                "has_access": True,
+                "access_type": "full",
+                "reason": "Inscrit au programme"
+            }
+        
+        # Vérifier s'il y a une demande en cours
+        pending_enrollment = db.query(ProgramParticipant).filter(
+            ProgramParticipant.program_id == module.program_id,
+            ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id,
+            ProgramParticipant.enrollment_status == EnrollmentStatus.pending
+        ).first()
+        
+        if pending_enrollment:
+            return {
+                "has_access": False,
+                "access_type": "pending",
+                "reason": "Demande d'inscription en cours de traitement"
+            }
+        
+        return {
+            "has_access": False,
+            "access_type": "restricted",
+            "reason": "Inscription au programme requise"
+        }
+    
+    return {
+        "has_access": False,
+        "access_type": "unauthorized",
+        "reason": "Type d'utilisateur non autorisé"
+    }
+
+@router.get("/modules/{module_id}/content", dependencies=[Depends(get_current_user)])
+def get_module_content_with_access_control(
+    module_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Récupérer le contenu d'un module avec contrôle d'accès"""
+    
+    # Vérifier l'accès au module
+    access_check = check_module_access(module_id, current_user, db)
+    
+    if not access_check["has_access"]:
+        raise HTTPException(
+            status_code=403, 
+            detail=f"Accès refusé: {access_check['reason']}"
+        )
+    
+    # Récupérer le module avec son contenu
+    module = db.query(Module).filter(Module.module_id == module_id).first()
+    contents = db.query(ModuleContent).filter(
+        ModuleContent.module_id == module_id,
+        ModuleContent.is_visible == True
+    ).order_by(ModuleContent.order_index).all()
+    
+    module_data = {
+        "module_id": str(module.module_id),
+        "title": module.title,
+        "description": module.description,
+        "module_type": module.module_type.value,
+        "difficulty_level": module.difficulty_level.value,
+        "estimated_duration_minutes": module.estimated_duration_minutes,
+        "learning_objectives": module.learning_objectives,
+        "order_index": module.order_index,
+        "access_type": access_check["access_type"],
+        "is_free": module.order_index <= 1,
+        "contents": []
+    }
+    
+    # Ajouter le contenu selon le niveau d'accès
+    for content in contents:
+        content_data = {
+            "content_id": str(content.content_id),
+            "title": content.title,
+            "description": content.description,
+            "content_type": content.content_type.value,
+            "order_index": content.order_index,
+            "duration_seconds": content.duration_seconds
+        }
+        
+        # Pour l'accès complet, ajouter tous les détails
+        if access_check["access_type"] == "full":
+            content_data.update({
+                "text_content": content.text_content,
+                "file_url": content.file_url,
+                "external_link": content.external_link,
+                "is_downloadable": content.is_downloadable
+            })
+        elif access_check["access_type"] == "free":
+            # Pour l'aperçu gratuit, limiter le contenu
+            if content.content_type == "text" and content.text_content:
+                # Limiter le texte à 200 caractères pour l'aperçu
+                content_data["text_content"] = content.text_content[:200] + "..." if len(content.text_content) > 200 else content.text_content
+                content_data["is_preview"] = len(content.text_content) > 200
+            else:
+                content_data["preview_only"] = True
+        
+        module_data["contents"].append(content_data)
+    
+    return module_data
+
+@router.post("/modules/{module_id}/start-progress", dependencies=[Depends(get_current_user)])
+def start_module_progress(
+    module_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Commencer la progression d'un module"""
+    
+    if current_user.user_type != "entrepreneur":
+        raise HTTPException(status_code=403, detail="Seuls les entrepreneurs peuvent suivre des modules")
+    
+    # Vérifier l'accès
+    access_check = check_module_access(module_id, current_user, db)
+    if not access_check["has_access"]:
+        raise HTTPException(status_code=403, detail=access_check["reason"])
+    
+    entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+    
+    # Vérifier s'il y a déjà une progression
+    existing_progress = db.query(ModuleProgress).filter(
+        ModuleProgress.module_id == module_id,
+        ModuleProgress.entrepreneur_id == entrepreneur.entrepreneur_id
+    ).first()
+    
+    if existing_progress:
+        if not existing_progress.is_started:
+            existing_progress.is_started = True
+            existing_progress.started_at = datetime.utcnow()
+            existing_progress.last_accessed_at = datetime.utcnow()
+            db.commit()
+        return {"message": "Progression mise à jour", "progress_id": str(existing_progress.progress_id)}
+    
+    # Créer une nouvelle progression
+    module = db.query(Module).filter(Module.module_id == module_id).first()
+    total_contents = len(module.contents)
+    
+    progress = ModuleProgress(
+        module_id=module_id,
+        entrepreneur_id=entrepreneur.entrepreneur_id,
+        is_started=True,
+        started_at=datetime.utcnow(),
+        last_accessed_at=datetime.utcnow(),
+        total_contents=total_contents
+    )
+    
+    db.add(progress)
+    db.commit()
+    
+    return {
+        "message": "Progression démarrée",
+        "progress_id": str(progress.progress_id)
+    }
+
+@router.get("/entrepreneur/my-modules", dependencies=[Depends(get_current_user)])
+def get_entrepreneur_modules(
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Récupérer tous les modules accessibles à un entrepreneur"""
+    
+    if current_user.user_type != "entrepreneur":
+        raise HTTPException(status_code=403, detail="Endpoint réservé aux entrepreneurs")
+    
+    entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+    if not entrepreneur:
+        raise HTTPException(status_code=404, detail="Profil entrepreneur non trouvé")
+    
+    # Récupérer tous les programmes
+    programs = db.query(Program).filter(Program.is_active == True).all()
+    
+    accessible_modules = []
+    
+    for program in programs:
+        # Vérifier l'inscription au programme
+        enrollment = db.query(ProgramParticipant).filter(
+            ProgramParticipant.program_id == program.program_id,
+            ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id
+        ).first()
+        
+        has_full_access = enrollment and enrollment.enrollment_status == EnrollmentStatus.approved
+        
+        # Récupérer les modules du programme
+        modules = db.query(Module).filter(
+            Module.program_id == program.program_id,
+            Module.status == ModuleStatus.published,
+            Module.is_visible == True
+        ).order_by(Module.order_index).all()
+        
+        for module in modules:
+            # Déterminer l'accès
+            is_accessible = has_full_access or module.order_index <= 1
+            
+            if is_accessible:  # Ne retourner que les modules accessibles
+                # Récupérer la progression
+                progress = db.query(ModuleProgress).filter(
+                    ModuleProgress.module_id == module.module_id,
+                    ModuleProgress.entrepreneur_id == entrepreneur.entrepreneur_id
+                ).first()
+                
+                module_data = {
+                    "module_id": str(module.module_id),
+                    "title": module.title,
+                    "description": module.description,
+                    "program_name": program.name,
+                    "program_id": str(program.program_id),
+                    "module_type": module.module_type.value,
+                    "difficulty_level": module.difficulty_level.value,
+                    "estimated_duration_minutes": module.estimated_duration_minutes,
+                    "order_index": module.order_index,
+                    "is_free": module.order_index <= 1,
+                    "access_type": "full" if has_full_access else "free",
+                    "content_count": len(module.contents)
+                }
+                
+                if progress:
+                    module_data.update({
+                        "completion_percentage": progress.completion_percentage,
+                        "is_started": progress.is_started,
+                        "is_completed": progress.is_completed,
+                        "last_accessed_at": progress.last_accessed_at,
+                        "time_spent_minutes": progress.time_spent_minutes
+                    })
+                else:
+                    module_data.update({
+                        "completion_percentage": 0,
+                        "is_started": False,
+                        "is_completed": False,
+                        "last_accessed_at": None,
+                        "time_spent_minutes": 0
+                    })
+                
+                accessible_modules.append(module_data)
+    
+    return {
+        "modules": accessible_modules,
+        "total_accessible": len(accessible_modules)
+    }

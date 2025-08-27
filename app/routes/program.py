@@ -641,3 +641,288 @@ def get_all_enrollments(
         })
     
     return result
+
+    # À ajouter dans app/routes/program.py
+
+@router.post("/programs/{program_id}/enroll", dependencies=[Depends(get_current_user)])
+def request_program_enrollment(
+    program_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Demander une inscription à un programme"""
+    
+    # Vérifier que l'utilisateur est un entrepreneur
+    if current_user.user_type != "entrepreneur":
+        raise HTTPException(status_code=403, detail="Seuls les entrepreneurs peuvent s'inscrire aux programmes")
+    
+    # Récupérer l'entrepreneur
+    entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+    if not entrepreneur:
+        raise HTTPException(status_code=404, detail="Profil entrepreneur non trouvé")
+    
+    # Vérifier que le programme existe
+    program = db.query(Program).filter(Program.program_id == program_id).first()
+    if not program:
+        raise HTTPException(status_code=404, detail="Programme non trouvé")
+    
+    # Vérifier qu'il n'y a pas déjà une demande en cours
+    existing_enrollment = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id
+    ).first()
+    
+    if existing_enrollment:
+        if existing_enrollment.enrollment_status == EnrollmentStatus.pending:
+            raise HTTPException(status_code=400, detail="Vous avez déjà une demande en cours pour ce programme")
+        elif existing_enrollment.enrollment_status == EnrollmentStatus.approved:
+            raise HTTPException(status_code=400, detail="Vous êtes déjà inscrit à ce programme")
+        elif existing_enrollment.enrollment_status == EnrollmentStatus.rejected:
+            # Permettre une nouvelle demande si la précédente a été rejetée
+            existing_enrollment.enrollment_status = EnrollmentStatus.pending
+            existing_enrollment.enrollment_request_date = datetime.utcnow()
+            existing_enrollment.rejection_reason = None
+            db.commit()
+            return {"message": "Nouvelle demande d'inscription envoyée"}
+    
+    # Créer une nouvelle demande d'inscription
+    enrollment = ProgramParticipant(
+        program_id=program_id,
+        entrepreneur_id=entrepreneur.entrepreneur_id,
+        enrollment_status=EnrollmentStatus.pending,
+        completion_status=CompletionStatus.in_progress
+    )
+    
+    db.add(enrollment)
+    db.commit()
+    
+    # TODO: Envoyer notification à l'admin
+    
+    return {
+        "message": "Demande d'inscription envoyée avec succès",
+        "program_name": program.name,
+        "enrollment_id": str(enrollment.participant_id)
+    }
+
+@router.get("/programs/{program_id}/enrollment-status", dependencies=[Depends(get_current_user)])
+def get_program_enrollment_status(
+    program_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Vérifier le statut d'inscription à un programme"""
+    
+    if current_user.user_type != "entrepreneur":
+        return {"status": "not_applicable"}
+    
+    entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+    if not entrepreneur:
+        return {"status": "no_profile"}
+    
+    enrollment = db.query(ProgramParticipant).filter(
+        ProgramParticipant.program_id == program_id,
+        ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id
+    ).first()
+    
+    if not enrollment:
+        return {"status": "not_enrolled"}
+    
+    return {
+        "status": enrollment.enrollment_status.value,
+        "enrollment_date": enrollment.enrollment_request_date,
+        "approved_date": enrollment.enrollment_approved_date,
+        "rejection_reason": enrollment.rejection_reason
+    }
+
+@router.get("/programs/{program_id}/modules/accessible", dependencies=[Depends(get_current_user)])
+def get_accessible_modules(
+    program_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Récupérer les modules accessibles d'un programme"""
+    
+    # Récupérer tous les modules du programme, triés par order_index
+    modules = db.query(Module).filter(
+        Module.program_id == program_id,
+        Module.status == ModuleStatus.published,
+        Module.is_visible == True
+    ).order_by(Module.order_index).all()
+    
+    if not modules:
+        return []
+    
+    # Pour les entrepreneurs, vérifier le niveau d'accès
+    accessible_modules = []
+    full_access = False
+    
+    if current_user.user_type == "entrepreneur":
+        entrepreneur = db.query(Entrepreneur).filter(Entrepreneur.user_id == current_user.user_id).first()
+        if entrepreneur:
+            enrollment = db.query(ProgramParticipant).filter(
+                ProgramParticipant.program_id == program_id,
+                ProgramParticipant.entrepreneur_id == entrepreneur.entrepreneur_id,
+                ProgramParticipant.enrollment_status == EnrollmentStatus.approved
+            ).first()
+            full_access = bool(enrollment)
+    else:
+        # Experts et admins ont accès complet
+        full_access = True
+    
+    for i, module in enumerate(modules):
+        # Les 2 premiers modules sont toujours accessibles (order_index 0 et 1)
+        is_accessible = full_access or (module.order_index <= 1)
+        
+        module_data = {
+            "module_id": str(module.module_id),
+            "title": module.title,
+            "description": module.description,
+            "module_type": module.module_type.value,
+            "difficulty_level": module.difficulty_level.value,
+            "estimated_duration_minutes": module.estimated_duration_minutes,
+            "order_index": module.order_index,
+            "is_accessible": is_accessible,
+            "is_free": module.order_index <= 1,  # Les 2 premiers sont gratuits
+            "content_count": len(module.contents)
+        }
+        
+        # Ajouter les informations de progression si entrepreneur
+        if current_user.user_type == "entrepreneur" and entrepreneur:
+            progress = db.query(ModuleProgress).filter(
+                ModuleProgress.module_id == module.module_id,
+                ModuleProgress.entrepreneur_id == entrepreneur.entrepreneur_id
+            ).first()
+            
+            if progress:
+                module_data.update({
+                    "completion_percentage": progress.completion_percentage,
+                    "is_started": progress.is_started,
+                    "is_completed": progress.is_completed,
+                    "last_accessed_at": progress.last_accessed_at
+                })
+            else:
+                module_data.update({
+                    "completion_percentage": 0,
+                    "is_started": False,
+                    "is_completed": False,
+                    "last_accessed_at": None
+                })
+        
+        accessible_modules.append(module_data)
+    
+    return {
+        "modules": accessible_modules,
+        "total_modules": len(modules),
+        "free_modules": sum(1 for m in modules if m.order_index <= 1),
+        "full_access": full_access
+    }
+
+# Routes pour l'admin (gestion des inscriptions)
+@router.get("/admin/programs/{program_id}/enrollments", dependencies=[Depends(require_admin)])
+def get_program_enrollments(
+    program_id: UUID,
+    status: Optional[str] = Query(None, description="Filtrer par statut: pending, approved, rejected"),
+    db: Session = Depends(get_db)
+):
+    """Récupérer les demandes d'inscription à un programme"""
+    
+    query = db.query(ProgramParticipant).filter(ProgramParticipant.program_id == program_id)
+    
+    if status:
+        query = query.filter(ProgramParticipant.enrollment_status == status)
+    
+    enrollments = query.order_by(desc(ProgramParticipant.enrollment_request_date)).all()
+    
+    result = []
+    for enrollment in enrollments:
+        entrepreneur = enrollment.entrepreneur
+        user = entrepreneur.user
+        
+        result.append({
+            "participant_id": str(enrollment.participant_id),
+            "entrepreneur_id": str(entrepreneur.entrepreneur_id),
+            "user_id": str(user.user_id),
+            "entrepreneur_name": f"{user.first_name} {user.last_name}",
+            "company_name": entrepreneur.company_name,
+            "email": user.email,
+            "enrollment_status": enrollment.enrollment_status.value,
+            "completion_status": enrollment.completion_status.value,
+            "enrollment_request_date": enrollment.enrollment_request_date,
+            "enrollment_approved_date": enrollment.enrollment_approved_date,
+            "rejection_reason": enrollment.rejection_reason,
+            "company_description": entrepreneur.company_description,
+            "industry_sector": entrepreneur.industry_sector
+        })
+    
+    return result
+
+@router.put("/admin/programs/{program_id}/enrollments/{participant_id}/approve", dependencies=[Depends(require_admin)])
+def approve_program_enrollment(
+    program_id: UUID,
+    participant_id: UUID,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Approuver une demande d'inscription"""
+    
+    enrollment = db.query(ProgramParticipant).filter(
+        ProgramParticipant.participant_id == participant_id,
+        ProgramParticipant.program_id == program_id
+    ).first()
+    
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="Demande d'inscription non trouvée")
+    
+    if enrollment.enrollment_status != EnrollmentStatus.pending:
+        raise HTTPException(status_code=400, detail="Cette demande n'est pas en attente")
+    
+    # Approuver l'inscription
+    enrollment.enrollment_status = EnrollmentStatus.approved
+    enrollment.enrollment_approved_date = datetime.utcnow()
+    enrollment.approved_by = current_user.user_id
+    enrollment.rejection_reason = None
+    
+    db.commit()
+    
+    # TODO: Envoyer notification à l'entrepreneur
+    
+    return {
+        "message": "Inscription approuvée avec succès",
+        "participant_id": str(enrollment.participant_id)
+    }
+
+@router.put("/admin/programs/{program_id}/enrollments/{participant_id}/reject", dependencies=[Depends(require_admin)])
+def reject_program_enrollment(
+    program_id: UUID,
+    participant_id: UUID,
+    rejection_data: dict,
+    current_user = Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Rejeter une demande d'inscription"""
+    
+    enrollment = db.query(ProgramParticipant).filter(
+        ProgramParticipant.participant_id == participant_id,
+        ProgramParticipant.program_id == program_id
+    ).first()
+    
+    if not enrollment:
+        raise HTTPException(status_code=404, detail="Demande d'inscription non trouvée")
+    
+    if enrollment.enrollment_status != EnrollmentStatus.pending:
+        raise HTTPException(status_code=400, detail="Cette demande n'est pas en attente")
+    
+    # Rejeter l'inscription
+    enrollment.enrollment_status = EnrollmentStatus.rejected
+    enrollment.approved_by = current_user.user_id
+    enrollment.rejection_reason = rejection_data.get("reason", "Aucune raison spécifiée")
+    
+    db.commit()
+    
+    # TODO: Envoyer notification à l'entrepreneur
+    
+    return {
+        "message": "Inscription rejetée",
+        "participant_id": str(enrollment.participant_id),
+        "reason": enrollment.rejection_reason
+    }

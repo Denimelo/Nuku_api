@@ -33,6 +33,8 @@ class User(Base):
     last_login = Column(DateTime, nullable=True)
     temporary_password_expiration = Column(DateTime, nullable=True)
     is_temporary_password = Column(Boolean, default=False)
+    photo_url = Column(String, nullable=True)  # Ajout de la photo de profil
+    is_first_connection = Column(Boolean, default=True)  # True si première connexion
 
     # Relations with other models
 

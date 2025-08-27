@@ -11,15 +11,32 @@ class CompletionStatus(str, enum.Enum):
     completed = "completed"
     dropped = "dropped"
 
+class EnrollmentStatus(str, enum.Enum):
+    pending = "pending"
+    approved = "approved" 
+    rejected = "rejected"
+
 class ProgramParticipant(Base):
     __tablename__ = "program_participants"
 
     participant_id = Column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     program_id = Column(UUID(as_uuid=True), ForeignKey("programs.program_id"), nullable=False)
     entrepreneur_id = Column(UUID(as_uuid=True), ForeignKey("entrepreneurs.entrepreneur_id"), nullable=False)
-    enrollment_date = Column(DateTime, default=datetime.utcnow)
-    completion_status = Column(Enum(CompletionStatus), default=CompletionStatus.in_progress)
+    
+    # Dates
+    enrollment_request_date = Column(DateTime, default=datetime.utcnow)  # Date de la demande
+    enrollment_approved_date = Column(DateTime, nullable=True)  # Date d'approbation
     completion_date = Column(DateTime, nullable=True)
+    
+    # Statuts
+    enrollment_status = Column(Enum(EnrollmentStatus), default=EnrollmentStatus.pending)
+    completion_status = Column(Enum(CompletionStatus), default=CompletionStatus.in_progress)
+    
+    # Validation
+    approved_by = Column(UUID(as_uuid=True), ForeignKey("users.user_id"), nullable=True)
+    rejection_reason = Column(String, nullable=True)
 
+    # Relations
     program = relationship("Program", back_populates="participants")
     entrepreneur = relationship("Entrepreneur", back_populates="program_participations")
+    approved_by_user = relationship("User", foreign_keys=[approved_by])
