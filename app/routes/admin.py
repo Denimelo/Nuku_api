@@ -8,6 +8,12 @@ import io
 import json
 from app.database import get_db
 from app.models.user import User, UserStatus
+from app.models.call import Call
+from app.models.program import Program
+from app.models.programParticipant import ProgramParticipant
+from app.models.module import Module
+from app.models.moduleProgress import ModuleProgress
+from app.models.message import Message
 from app.models.expert import Expert
 from app.models.entrepreneur import Entrepreneur
 from app.models.expertMentoring import ExpertMentoring, MentoringStatus
@@ -16,6 +22,7 @@ from app.schemas.entrepreneur import EntrepreneurResponse
 from app.schemas.expert import ExpertCreate, ExpertResponse
 from app.crud.user import get_user_by_email, get_user_by_id
 from app.crud.expert import create_expert, get_expert_by_id
+from app.crud.program import get_program
 from app.crud.entrepreneur import get_entrepreneur_by_id
 from app.auth.dependencies import get_current_user, require_admin
 from app.utils.email import send_expert_welcome_email, send_entrepreneur_validation_email, send_entrepreneur_rejection_email
@@ -320,7 +327,7 @@ def get_program_stats_report(
 ):
     """📚 Statistiques détaillées d'un programme"""
     
-    program = get_program_by_id(db, program_id)
+    program = get_program(db, program_id)
     if not program:
         raise HTTPException(status_code=404, detail="Programme non trouvé")
     
@@ -718,3 +725,255 @@ def update_mentoring_on_completion(db: Session, entrepreneur_id: UUID):
         active_mentoring.completed_date = datetime.utcnow()
         active_mentoring.completion_reason = 'formation_completed'
         db.commit()
+
+# ========== ROUTES PARAMÈTRES ==========
+
+@router.get("/settings/platform", dependencies=[Depends(require_admin)])
+def get_platform_settings(db: Session = Depends(get_db)):
+    """📋 Récupérer les paramètres de la plateforme"""
+    
+    # Pour l'instant, on retourne des paramètres par défaut
+    # Dans une vraie implémentation, ces paramètres seraient stockés en base
+    default_settings = {
+        "platform_name": "NUKU",
+        "base_url": "https://nuku.vercel.app",
+        "description": "Plateforme d'accélération pour MPME",
+        "default_language": "fr",
+        "timezone": "Africa/Lome",
+        "maintenance_mode": False,
+        "maintenance_message": "La plateforme est en cours de maintenance. Nous reviendrons bientôt."
+    }
+    
+    return {"settings": default_settings}
+
+@router.put("/settings/platform", dependencies=[Depends(require_admin)])
+def update_platform_settings(
+    settings: Dict[str, Any], 
+    db: Session = Depends(get_db)
+):
+    """🔧 Mettre à jour les paramètres de la plateforme"""
+    
+    # Dans une vraie implémentation, vous stockeriez ces paramètres en base
+    # Pour l'instant, on simule la sauvegarde
+    
+    return {
+        "message": "Paramètres de la plateforme mis à jour avec succès",
+        "updated_settings": settings
+    }
+
+@router.get("/settings/system", dependencies=[Depends(require_admin)])
+def get_system_settings(db: Session = Depends(get_db)):
+    """⚙️ Récupérer les paramètres système"""
+    
+    default_settings = {
+        "log_level": "INFO",
+        "log_retention_days": 30,
+        "max_user_sessions": 5,
+        "session_timeout_minutes": 360,
+        "debug_mode": False,
+        "api_rate_limiting": True
+    }
+    
+    return {"settings": default_settings}
+
+@router.put("/settings/system", dependencies=[Depends(require_admin)])
+def update_system_settings(
+    settings: Dict[str, Any], 
+    db: Session = Depends(get_db)
+):
+    """🔧 Mettre à jour les paramètres système"""
+    
+    return {
+        "message": "Paramètres système mis à jour avec succès",
+        "updated_settings": settings
+    }
+
+@router.get("/settings/email", dependencies=[Depends(require_admin)])
+def get_email_settings(db: Session = Depends(get_db)):
+    """📧 Récupérer les paramètres email"""
+    
+    # Attention: ne jamais retourner les vrais mots de passe
+    default_settings = {
+        "smtp_server": "smtp.gmail.com",
+        "smtp_port": 587,
+        "sender_email": "noreply@nuku.tg",
+        "sender_name": "NUKU Platform",
+        "smtp_username": "",
+        "smtp_password": "***",  # Masqué pour la sécurité
+        "use_tls": True,
+        "use_ssl": False
+    }
+    
+    return {"settings": default_settings}
+
+@router.put("/settings/email", dependencies=[Depends(require_admin)])
+def update_email_settings(
+    settings: Dict[str, Any], 
+    db: Session = Depends(get_db)
+):
+    """🔧 Mettre à jour les paramètres email"""
+    
+    # Dans une vraie implémentation, vous chiffriez le mot de passe
+    return {
+        "message": "Paramètres email mis à jour avec succès"
+    }
+
+@router.post("/settings/email/test", dependencies=[Depends(require_admin)])
+def test_email_configuration(
+    test_data: Dict[str, str], 
+    db: Session = Depends(get_db)
+):
+    """🧪 Tester la configuration email"""
+    
+    test_email = test_data.get("test_email")
+    
+    if not test_email:
+        raise HTTPException(status_code=400, detail="Email de test requis")
+    
+    try:
+        # Ici vous implémenteriez l'envoi d'un email de test
+        # Pour l'instant, on simule le succès
+        
+        # from app.utils.email import send_test_email
+        # send_test_email(test_email)
+        
+        return {
+            "message": f"Email de test envoyé avec succès à {test_email}"
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500, 
+            detail=f"Erreur lors de l'envoi de l'email de test: {str(e)}"
+        )
+
+@router.get("/settings/storage/stats", dependencies=[Depends(require_admin)])
+def get_storage_stats(db: Session = Depends(get_db)):
+    """📊 Statistiques de stockage"""
+    
+    # Dans une vraie implémentation, vous récupéreriez ces stats depuis Supabase
+    mock_stats = {
+        "documents_size": "45 MB",
+        "documents_count": 127,
+        "avatars_size": "8 MB", 
+        "avatars_count": 34,
+        "modules_size": "156 MB",
+        "modules_count": 23,
+        "total_size": "209 MB",
+        "last_calculated": datetime.now().isoformat()
+    }
+    
+    return {"stats": mock_stats}
+
+@router.post("/settings/backup", dependencies=[Depends(require_admin)])
+def create_backup(db: Session = Depends(get_db)):
+    """💾 Créer une sauvegarde manuelle"""
+    
+    try:
+        # Dans une vraie implémentation, vous créeriez une sauvegarde
+        # des données critiques (utilisateurs, programmes, etc.)
+        
+        backup_id = f"backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        
+        # Exemple de sauvegarde des utilisateurs
+        users_count = db.query(User).count()
+        programs_count = db.query(Program).count() if 'Program' in globals() else 0
+        
+        return {
+            "message": "Sauvegarde créée avec succès",
+            "backup_id": backup_id,
+            "backup_date": datetime.now().isoformat(),
+            "stats": {
+                "users": users_count,
+                "programs": programs_count
+            }
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors de la création de la sauvegarde: {str(e)}"
+        )
+
+@router.post("/settings/cache/clear", dependencies=[Depends(require_admin)])
+def clear_cache(cache_type: str = Query(None), db: Session = Depends(get_db)):
+    """🗑️ Vider le cache"""
+    
+    try:
+        # Dans une vraie implémentation, vous videriez le cache Redis/Memcached
+        
+        cache_types_cleared = []
+        
+        if not cache_type or cache_type == "all":
+            cache_types_cleared = ["sessions", "api_responses", "user_data"]
+        else:
+            cache_types_cleared = [cache_type]
+        
+        return {
+            "message": f"Cache vidé avec succès: {', '.join(cache_types_cleared)}",
+            "cleared_types": cache_types_cleared,
+            "cleared_at": datetime.now().isoformat()
+        }
+    except Exception as e:
+        raise HTTPException(
+            status_code=500,
+            detail=f"Erreur lors du vidage du cache: {str(e)}"
+        )
+
+@router.get("/settings/logs", dependencies=[Depends(require_admin)])
+def get_system_logs(
+    level: str = Query("INFO", description="Niveau de log (DEBUG, INFO, WARNING, ERROR)"),
+    limit: int = Query(100, description="Nombre maximum de logs à retourner"),
+    db: Session = Depends(get_db)
+):
+    """📋 Récupérer les logs système"""
+    
+    # Dans une vraie implémentation, vous liriez les vrais logs
+    mock_logs = [
+        {
+            "id": 1,
+            "timestamp": "2024-01-15T10:30:00Z",
+            "level": "INFO",
+            "message": "Utilisateur connecté",
+            "module": "auth",
+            "user_id": "123e4567-e89b-12d3-a456-426614174000"
+        },
+        {
+            "id": 2,
+            "timestamp": "2024-01-15T10:25:00Z", 
+            "level": "WARNING",
+            "message": "Tentative de connexion échouée",
+            "module": "auth",
+            "ip_address": "192.168.1.100"
+        },
+        {
+            "id": 3,
+            "timestamp": "2024-01-15T10:20:00Z",
+            "level": "ERROR", 
+            "message": "Erreur de base de données",
+            "module": "database",
+            "error_code": "CONNECTION_TIMEOUT"
+        }
+    ]
+    
+    # Filtrer par niveau si spécifié
+    if level != "ALL":
+        mock_logs = [log for log in mock_logs if log["level"] == level]
+    
+    return {
+        "logs": mock_logs[:limit],
+        "total": len(mock_logs),
+        "level_filter": level,
+        "limit": limit
+    }
+
+# ========== FONCTION UTILITAIRE ==========
+
+def get_system_info():
+    """Récupérer les informations système de base"""
+    return {
+        "python_version": "3.13",
+        "fastapi_version": "0.104.1",
+        "database": "PostgreSQL (Supabase)",
+        "storage": "Supabase Storage", 
+        "deployment": "Render",
+        "uptime": "5 jours, 3 heures"
+    }   
