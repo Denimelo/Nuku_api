@@ -11,12 +11,14 @@ from app.models.user import User
 from app.models.program import Program
 from app.models.entrepreneur import Entrepreneur, ValidationStatus
 from app.models.programParticipant import EnrollmentStatus, CompletionStatus
-from app.models.module import Module
+from app.models.module import Module, ModuleStatus
 from app.models.moduleProgress import ModuleProgress
-from app.schemas.program import (
-    ProgramResponse, ProgramCreate, ProgramUpdate, ProgramWithParticipation,
-    ProgramParticipantResponse, ProgramStats, EntrepreneurProgramSummary,
-    CompletionStatusSchema
+from app.schemas.program import EntrepreneurProgramSummary, ProgramCreate, ProgramParticipantResponse, ProgramResponse, ProgramStats, ProgramUpdate, ProgramWithParticipation
+from app.crud.program import (
+    get_all_programs, get_active_programs, create_program, get_program,
+    update_program, delete_program, enroll_entrepreneur_to_program,
+    get_entrepreneur_programs, get_program_participants, get_program_participants_count,
+    leave_program, get_participation_by_ids, update_participation_status
 )
 from app.crud.program import (
     get_all_programs, get_active_programs, create_program, get_program,
