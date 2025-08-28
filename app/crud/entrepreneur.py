@@ -208,7 +208,7 @@ def get_entrepreneur_recent_activities(
             "activity_type": "enrollment",
             "title": "Inscription à un programme",
             "description": f"Inscrit au programme: {participation.program.name}",
-            "date": participation.enrollment_date,
+            "date": participation.enrollment_request_date,
             "related_id": str(participation.program.program_id)
         })
         

@@ -211,7 +211,7 @@ def get_my_dashboard(
                 program_data = ProgramWithParticipation(
                     **program.__dict__,
                     is_enrolled=True,
-                    enrollment_date=participation.enrollment_date,
+                    enrollment_date=participation.enrollment_request_date,
                     completion_status=participation.completion_status,
                     participants_count=0,  # Peut être optimisé
                     available_spots=None

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.orm import Session
+from sqlalchemy import desc
 from typing import List, Optional
 from uuid import UUID
 from datetime import datetime
@@ -9,6 +10,9 @@ from app.auth.dependencies import get_current_user, require_admin, require_entre
 from app.models.user import User
 from app.models.program import Program
 from app.models.entrepreneur import Entrepreneur, ValidationStatus
+from app.models.programParticipant import EnrollmentStatus, CompletionStatus
+from app.models.module import Module
+from app.models.moduleProgress import ModuleProgress
 from app.schemas.program import (
     ProgramResponse, ProgramCreate, ProgramUpdate, ProgramWithParticipation,
     ProgramParticipantResponse, ProgramStats, EntrepreneurProgramSummary,
@@ -70,7 +74,7 @@ def list_programs(
             )
             if participation:
                 program_data.is_enrolled = True
-                program_data.enrollment_date = participation.enrollment_date
+                program_data.enrollment_date = participation.enrollment_request_date
                 program_data.completion_status = participation.completion_status
         
         result.append(program_data)
@@ -112,7 +116,7 @@ def get_program_details(
             )
             if participation:
                 program_data.is_enrolled = True
-                program_data.enrollment_date = participation.enrollment_date
+                program_data.enrollment_date = participation.enrollment_request_date
                 program_data.completion_status = participation.completion_status
     
     return program_data
@@ -625,7 +629,7 @@ def get_all_enrollments(
             "participant_id": str(participation.participant_id),
             "program_id": str(participation.program_id),
             "program_name": participation.program.name,
-            "enrollment_date": participation.enrollment_date.isoformat(),
+            "enrollment_date": participation.enrollment_request_date.isoformat(),
             "completion_status": participation.completion_status,
             "completion_date": participation.completion_date.isoformat() if participation.completion_date else None,
             "entrepreneur": {
