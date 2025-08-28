@@ -55,7 +55,7 @@ class ProgramParticipantCreate(ProgramParticipantBase):
 
 class ProgramParticipantResponse(ProgramParticipantBase):
     participant_id: UUID4
-    enrollment_date: datetime
+    enrollment_request_date: Optional[datetime] = None
     completion_status: CompletionStatusSchema
     completion_date: Optional[datetime] = None
 
@@ -65,7 +65,7 @@ class ProgramParticipantResponse(ProgramParticipantBase):
 class ProgramWithParticipation(ProgramResponse):
     """Programme avec info de participation de l'entrepreneur connecté"""
     is_enrolled: bool = False
-    enrollment_date: Optional[datetime] = None
+    enrollment_request_date: Optional[datetime] = None
     completion_status: Optional[CompletionStatusSchema] = None
     participants_count: int = 0
     available_spots: Optional[int] = None
