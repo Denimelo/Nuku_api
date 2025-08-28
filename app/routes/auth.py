@@ -251,14 +251,35 @@ def change_password(
             detail="Mot de passe actuel incorrect"
         )
     
+    # Si c'était la première connexion, marquer comme terminée
+    if current_user.is_first_connection:
+        current_user.is_first_connection = False
+        current_user.is_temporary_password = False
+    
     update_user_password(db, current_user.user_id, request.new_password)
     
     return {"message": "Mot de passe modifié avec succès"}
 
+@router.post("/complete-first-login", dependencies=[Depends(get_current_user)])
+def complete_first_login(current_user: User = Depends(get_current_user), db: Session = Depends(get_db)):
+    """Marquer la première connexion comme terminée"""
+    
+    if not current_user.is_first_connection:
+        raise HTTPException(status_code=400, detail="La première connexion a déjà été complétée")
+    
+    # Mettre à jour les champs
+    current_user.is_first_connection = False
+    current_user.is_temporary_password = False
+    current_user.last_login = datetime.utcnow()
+    
+    db.commit()
+    
+    return {"message": "Première connexion complétée avec succès"}
+
 @router.get("/me")
 def get_current_user_info(current_user: User = Depends(get_current_user)):
     """
-    👤 Récupérer infos utilisateur connecté
+    👤 Récupérer les informations de l'utilisateur connecté
     """
     return {
         "user_id": str(current_user.user_id),
@@ -267,5 +288,9 @@ def get_current_user_info(current_user: User = Depends(get_current_user)):
         "last_name": current_user.last_name,
         "user_type": current_user.user_type.value,
         "status": current_user.status.value,
-        "last_login": current_user.last_login
+        "phone": current_user.phone,
+        "created_at": current_user.created_at,
+        "last_login": current_user.last_login,
+        "is_first_connection": current_user.is_first_connection,
+        "is_temporary_password": current_user.is_temporary_password
     }

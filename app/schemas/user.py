@@ -48,8 +48,11 @@ class UserResponse(BaseModel):
     country: Optional[str]
     postal_code: Optional[str]
     user_type: str
+    is_first_connection: bool
+    is_temporary_password: bool
     status: str
     created_at: datetime
+
 
 class UserDelete(BaseModel):
     user_id: UUID4

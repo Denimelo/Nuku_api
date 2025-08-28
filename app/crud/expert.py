@@ -24,6 +24,8 @@ def create_expert(db: Session, data: ExpertCreate, temp_password: str) -> Expert
         password_hash=hash_password(temp_password),
         user_type=UserType.expert,
         status=UserStatus.active,
+        is_temporary_password=True,
+        is_first_connection=True
     )
     db.add(user)
     db.flush()  # Pour avoir l'user_id
