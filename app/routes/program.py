@@ -118,7 +118,7 @@ def get_program_enrollment_status(
     
     return {
         "status": enrollment.enrollment_status.value,
-        "enrollment_date": enrollment.enrollment_request_date,
+        "enrollment_request_date": enrollment.enrollment_request_date,
         "approved_date": enrollment.enrollment_approved_date,
         "rejection_reason": enrollment.rejection_reason
     }
@@ -253,7 +253,7 @@ def list_programs(
             )
             if participation:
                 program_data.is_enrolled = True
-                program_data.enrollment_date = participation.enrollment_request_date
+                program_data.enrollment_request_date = participation.enrollment_request_date
                 program_data.completion_status = participation.completion_status
         
         result.append(program_data)
@@ -295,7 +295,7 @@ def get_program_details(
             )
             if participation:
                 program_data.is_enrolled = True
-                program_data.enrollment_date = participation.enrollment_request_date
+                program_data.enrollment_request_date = participation.enrollment_request_date
                 program_data.completion_status = participation.completion_status
     
     return program_data
@@ -808,7 +808,7 @@ def get_all_enrollments(
             "participant_id": str(participation.participant_id),
             "program_id": str(participation.program_id),
             "program_name": participation.program.name,
-            "enrollment_date": participation.enrollment_request_date.isoformat(),
+            "enrollment_request_date": participation.enrollment_request_date.isoformat(),
             "completion_status": participation.completion_status,
             "completion_date": participation.completion_date.isoformat() if participation.completion_date else None,
             "entrepreneur": {

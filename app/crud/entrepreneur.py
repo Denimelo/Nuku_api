@@ -201,7 +201,7 @@ def get_entrepreneur_recent_activities(
     # Activités de participation aux programmes
     participations = db.query(ProgramParticipant).filter(
         ProgramParticipant.entrepreneur_id == entrepreneur_id
-    ).order_by(ProgramParticipant.enrollment_date.desc()).limit(5).all()
+    ).order_by(ProgramParticipant.enrollment_request_date.desc()).limit(5).all()
     
     for participation in participations:
         activities.append({

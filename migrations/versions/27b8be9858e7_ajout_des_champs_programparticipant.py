@@ -390,7 +390,7 @@ def downgrade() -> None:
     sa.Column('participant_id', sa.UUID(), autoincrement=False, nullable=False),
     sa.Column('program_id', sa.UUID(), autoincrement=False, nullable=False),
     sa.Column('entrepreneur_id', sa.UUID(), autoincrement=False, nullable=False),
-    sa.Column('enrollment_date', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
+    sa.Column('enrollment_request_date', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
     sa.Column('completion_status', postgresql.ENUM('in_progress', 'completed', 'dropped', name='completionstatus'), autoincrement=False, nullable=True),
     sa.Column('completion_date', postgresql.TIMESTAMP(), autoincrement=False, nullable=True),
     sa.ForeignKeyConstraint(['entrepreneur_id'], ['entrepreneurs.entrepreneur_id'], name=op.f('program_participants_entrepreneur_id_fkey')),

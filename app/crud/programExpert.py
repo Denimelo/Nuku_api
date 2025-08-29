@@ -162,7 +162,7 @@ def get_expert_entrepreneurs_in_programs(db: Session, expert_id: UUID) -> List[D
                 "entrepreneur_name": f"{entrepreneur.user.first_name} {entrepreneur.user.last_name}",
                 "company_name": entrepreneur.company_name,
                 "industry_sector": entrepreneur.industry_sector,
-                "enrollment_date": participant.enrollment_date,
+                "enrollment_request_date": participant.enrollment_request_date,
                 "completion_status": participant.completion_status.value,
                 "program_id": str(participant.program_id),
                 "program_name": participant.program.name if participant.program else "N/A"

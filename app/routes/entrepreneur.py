@@ -211,7 +211,7 @@ def get_my_dashboard(
                 program_data = ProgramWithParticipation(
                     **program.__dict__,
                     is_enrolled=True,
-                    enrollment_date=participation.enrollment_request_date,
+                    enrollment_request_date=participation.enrollment_request_date,
                     completion_status=participation.completion_status,
                     participants_count=0,  # Peut être optimisé
                     available_spots=None
@@ -369,7 +369,7 @@ def get_my_progress_report(
     
     programs_joined = len([
         p for p in participations 
-        if p.enrollment_date.date() >= start_date
+        if p.enrollment_request_date.date() >= start_date
     ])
     
     programs_completed = len([

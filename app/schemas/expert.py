@@ -114,7 +114,7 @@ class ExpertEntrepreneur(BaseModel):
     entrepreneur_name: str
     company_name: str
     industry_sector: Optional[str]
-    enrollment_date: datetime
+    enrollment_request_date: datetime
     progress_percentage: float
     last_interaction: Optional[datetime]
 

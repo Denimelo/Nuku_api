@@ -17,7 +17,7 @@ class ProgramParticipantCreate(ProgramParticipantBase):
 
 class ProgramParticipantResponse(ProgramParticipantBase):
     participant_id: UUID4
-    enrollment_date: date
+    enrollment_request_date: date
     completion_status: CompletionStatus
     completion_date: Optional[date] = None
 
@@ -26,7 +26,7 @@ class ProgramParticipantResponse(ProgramParticipantBase):
 
 class ProgramParticipantOut(ProgramParticipantBase):
     participant_id: UUID4
-    enrollment_date: date
+    enrollment_request_date: date
     completion_status: CompletionStatus
     completion_date: Optional[date] = None
 

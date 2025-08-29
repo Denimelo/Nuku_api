@@ -120,7 +120,7 @@ def get_my_expert_dashboard(
             entrepreneur_name=e['entrepreneur_name'],
             company_name=e['company_name'],
             industry_sector=e.get('industry_sector'),
-            enrollment_date=e['enrollment_date'],
+            enrollment_request_date=e['enrollment_request_date'],
             progress_percentage=75.0,  # TODO: Calculer vraie progression
             last_interaction=None  # TODO: Implémenter
         ) for e in entrepreneurs_data
@@ -233,7 +233,7 @@ def get_my_mentored_entrepreneurs(
             entrepreneur_name=e['entrepreneur_name'],
             company_name=e['company_name'],
             industry_sector=e.get('industry_sector'),
-            enrollment_date=e['enrollment_date'],
+            enrollment_request_date=e['enrollment_request_date'],
             progress_percentage=75.0,  # TODO: Calculer vraie progression
             last_interaction=None  # TODO: Implémenter
         ) for e in entrepreneurs_data
